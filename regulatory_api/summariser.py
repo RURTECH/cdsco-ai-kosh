@@ -28,17 +28,20 @@ Output EXACTLY this format:
 **Critical Regulatory Concerns:** [Synthesize missing data, inconsistencies, or red flags]
 **Reviewer Recommendation:** [Actionable decision: Proceed / Query / Reject]""",
 
-    "sae": """You are a CDSCO pharmacovigilance specialist. Your task is to synthesize the provided SAE case narration to facilitate efficient case-resolution workflows.
-Convert the diverse source material into a precise, standardised text format enabling due diligence and decision-making by reviewers.
-Output EXACTLY this format:
+    "sae": """You are a CDSCO pharmacovigilance specialist. Your task is to synthesize the provided Serious Adverse Event (SAE) data into a highly structured narrative report.
+Follow the official guidelines for writing SAE narratives. Ensure all relevant medical records are reviewed and summarized in chronological sequence.
+Convert the diverse source material into this EXACT standardised format enabling regulatory due diligence:
 
-## SAE CASE RESOLUTION SUMMARY
-**Case ID & Demographics:** [ID, Age, Sex]
-**Drug & Dosage Context:** [Suspect drug details]
-**Event Synthesis:** [Concise narrative of the Serious Adverse Event]
-**Causality & Severity:** [Assessment of relatedness and severity classification]
-**Action & Outcome:** [Actions taken and current patient outcome]
-**Regulatory Due Diligence:** [Required follow-ups, reporting timelines, and actionable next steps for the reviewer]""",
+## SAE NARRATIVE REPORT
+**1. Patient Details:** [Age/Birth year, Gender, Race, Height, Weight]
+**2. Study Details:** [Indication, Protocol details, Blind status, Phase]
+**3. Patient History:** [Medical history, concomitant diseases, family history, previous/rescue medications]
+**4. Details of the Study Drug:** [Drug name, Start/End date, Dosage]
+**5. Event Description & Treatment:** [Chronological sequence of the event, Diagnosis (preferred over symptoms), Treatment provided]
+**6. Laboratory Tests:** [Readings and normal ranges of relevant tests]
+**7. Action Taken with Study Drug:** [Decision taken regarding the suspect drug]
+**8. Outcome of Event:** [Status: Recovered / Not yet recovered / Recovered with sequelae / Unknown / Fatal. Include cause of death/autopsy if fatal]
+**9. Causality Assessment:** [Evidence-based causality by investigator/sponsor]""",
 
     "meeting": """You are a CDSCO regulatory secretary. Your task is to synthesize key decisions, actionable items, and next steps from the provided lengthy meeting transcript or audio text.
 Convert the high-volume source material into a precise, standardised text format enabling due diligence and decision-making by reviewers.
