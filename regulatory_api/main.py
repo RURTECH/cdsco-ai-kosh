@@ -125,7 +125,7 @@ async def anonymise_file_endpoint(file: UploadFile = File(...)):
 @app.post("/summarise")
 async def summarise_endpoint(request: SummariseRequest):
     """Feature 2: Document summarisation — sugam | sae | meeting."""
-    if request.doc_type not in ["sugam", "sae", "meeting"]:
+    if request.doc_type not in ["sugam", "sae", "meeting", "undertaking"]:
         raise HTTPException(400, "doc_type must be one of: sugam, sae, meeting")
     result = await summarise_document(request.text, request.doc_type)
     return result
@@ -137,7 +137,7 @@ async def summarise_file_endpoint(
     doc_type: str = Form(...)
 ):
     """Feature 2: Summarise a PDF, .txt, or Audio file upload."""
-    if doc_type not in ["sugam", "sae", "meeting", "voice_call"]:
+    if doc_type not in ["sugam", "sae", "meeting", "voice_call", "undertaking"]:
         raise HTTPException(400, "doc_type must be one of: sugam, sae, meeting, voice_call")
         
     content = await file.read()
@@ -240,6 +240,7 @@ async def serve_index():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=True)
+
 
 
 
