@@ -9,8 +9,8 @@
 ---
 
 ## 🟢 Live Application Demo
-**Test the live 24/7 Cloud Application here:** 👉 [https://cdsco-ai-kosh-production.up.railway.app](https://cdsco-ai-kosh-production.up.railway.app)  
-*(Accessible worldwide from any Desktop or Mobile device. No installation required.)*
+**Test the live 24/7 Cloud Application here:** 👉 [https://cdsco-ai-kosh.pages.dev](https://cdsco-ai-kosh.pages.dev)  
+*(Accessible worldwide from any Desktop or Mobile device. No installation required. Fully decoupled architecture with Cloudflare Pages Edge UI connecting to the secure Railway Python Core Engine).*
 
 ---
 
