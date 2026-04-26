@@ -290,7 +290,7 @@ async function runBiometricIdentification(imageBase64, btn) {
     resultBox.innerHTML = '<span style="color: var(--text-muted)">Running RurTech.ai Biometric Extractor extraction...<br>Tokenizing & verifying Blockchain Registry...<br>Synthesizing context via RurTech.ai Core Engine...</span>';
 
     try {
-        const response = await fetch(${API_BASE}/biometric/identify, {
+        const response = await fetch(`${API_BASE}/biometric/identify`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ image_base64: imageBase64 })
@@ -299,27 +299,27 @@ async function runBiometricIdentification(imageBase64, btn) {
         const data = await response.json();
         
         if (response.ok) {
-            resultBox.innerHTML = 
+            resultBox.innerHTML = `
                 <div style="padding: 16px; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px; margin-bottom: 15px;">
                     <strong style="color: var(--success); font-size: 16px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-robot"></i> RurTech.ai Core Engine Context:</strong>
-                    <p style="margin-top: 10px; font-size: 15px; color: #f8fafc; line-height: 1.5; font-style: italic;">""</p>
+                    <p style="margin-top: 10px; font-size: 15px; color: #f8fafc; line-height: 1.5; font-style: italic;">"${data['RurTech.ai Core_contextual_greeting']}"</p>
                 </div>
                 <div style="padding: 16px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; margin-bottom: 15px;">
                     <strong style="color: #60a5fa; font-size: 14px;"><i class="fa-brands fa-hive"></i> On-Device Blockchain Registry (Secured)</strong>
                     <div style="margin-top: 8px; font-family: monospace; font-size: 12px; color: #cbd5e1;">
-                        Token: <br>
-                        TX Hash: <br>
-                        Smart Contract: 
+                        Token: ${data.tokenizer_pseudonymisation}<br>
+                        TX Hash: ${data.blockchain_registry.transaction_hash}<br>
+                        Smart Contract: ${data.blockchain_registry.smart_contract}
                     </div>
                 </div>
                 <strong style="color: var(--accent);">Backend Diagnostics:</strong>
-                <pre style="margin-top: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; font-size: 11px;"></pre>
-            ;
+                <pre style="margin-top: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; font-size: 11px;">${JSON.stringify(data, null, 2)}</pre>
+            `;
         } else {
-            resultBox.innerHTML = <span style="color: var(--danger)">Error ()</span><br><pre></pre>;
+            resultBox.innerHTML = `<span style="color: var(--danger)">Error (${response.status})</span><br><pre>${JSON.stringify(data, null, 2)}</pre>`;
         }
     } catch (error) {
-        resultBox.innerHTML = <span style="color: var(--danger)">Connection Error:</span> ;
+        resultBox.innerHTML = `<span style="color: var(--danger)">Connection Error:</span> ${error.message}`;
     } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;
