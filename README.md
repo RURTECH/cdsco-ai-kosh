@@ -6,6 +6,12 @@
 
 ---
 
+## ?? Live Application Demo
+**Test the live 24/7 Cloud Application here:** ?? [https://huggingface.co/spaces/sad0101/cdsco-ai-kosh](https://huggingface.co/spaces/sad0101/cdsco-ai-kosh)  
+*(Accessible worldwide from any Desktop or Mobile device. No installation required.)*
+
+---
+
 ## ?? 24/7 Cloud Deployment (100% Free)
 If you want to host this permanently online without any hosting charges or credit cards, the best platform for AI Hackathons is **Hugging Face Spaces**:
 1. Go to [Hugging Face Spaces](https://huggingface.co/spaces) and create a free account.
@@ -17,3 +23,4 @@ If you want to host this permanently online without any hosting charges or credi
 7. Hugging Face will automatically detect the Dockerfile and build the application for free!
 
 Within minutes, you will get a live https://huggingface.co/spaces/... link. Both the frontend and backend are automatically served together, accessible from any mobile phone worldwide, 24/7!
+
