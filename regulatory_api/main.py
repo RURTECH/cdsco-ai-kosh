@@ -227,6 +227,22 @@ async def biometric_identify_endpoint(request: BiometricRequest):
 
 
 # ---------------------------------------------------------------------------
+# Feature 7: CDSCO Knowledge Base RAG (Official Document Q&A)
+# ---------------------------------------------------------------------------
+class AskRequest(BaseModel):
+    question: str
+
+@app.post("/ask")
+async def ask_knowledge_base(request: AskRequest):
+    """Feature 7: Answer regulatory questions using the CDSCO official document knowledge base."""
+    if not request.question or len(request.question.strip()) < 5:
+        raise HTTPException(400, "Please provide a valid question.")
+    from knowledge_rag import query_knowledge_base
+    result = await query_knowledge_base(request.question)
+    return result
+
+
+# ---------------------------------------------------------------------------
 # Frontend Static Hosting (1-File Foolproof Method for Docker)
 # ---------------------------------------------------------------------------
 @app.get("/")

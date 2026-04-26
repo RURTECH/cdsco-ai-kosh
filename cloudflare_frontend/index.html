@@ -75,6 +75,9 @@
             <button onclick="switchTab('biometric')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition-all text-left">
                 <i class="fa-solid fa-face-viewfinder w-5"></i> Biometric Queue
             </button>
+            <button onclick="switchTab('ask')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition-all text-left">
+                <i class="fa-solid fa-book-open-reader w-5"></i> Ask CDSCO (RAG)
+            </button>
         </nav>
     </aside>
 
@@ -242,6 +245,20 @@
                             <div id="biometric-result" class="flex-1 p-4 rounded-lg bg-slate-900 border border-slate-800 font-mono text-sm hidden whitespace-pre-wrap overflow-y-auto text-slate-300 min-h-[200px]"></div>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <!-- Ask CDSCO (RAG) -->
+            <section id="ask" class="tab-content max-w-4xl mx-auto">
+                <div class="glass-panel p-8 rounded-2xl border border-slate-800 shadow-xl">
+                    <h3 class="text-2xl font-semibold mb-2 flex items-center gap-3"><i class="fa-solid fa-book-open-reader text-amber-500"></i> Ask CDSCO Knowledge Base</h3>
+                    <p class="text-slate-400 mb-2">Query the official CDSCO/SUGAM documentation using Retrieval-Augmented Generation (RAG).</p>
+                    <p class="text-xs text-slate-500 mb-6">Sources: NDCT Rules 2019, SAE User Manual, PSUR Manuals, Export NOC, Cell &amp; Gene Therapy, Form 12A, and more.</p>
+                    <textarea id="ask-input" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-4 text-slate-200 outline-none focus:ring-2 focus:ring-amber-500 resize-none mb-4" placeholder="Ask any CDSCO regulatory question...">What are the mandatory steps for filing an SAE report on the SUGAM portal?</textarea>
+                    <button onclick="runApi('ask', {question: document.getElementById('ask-input').value}, this, 'ask-result')" class="bg-amber-600 hover:bg-amber-500 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-amber-500/20">
+                        <i class="fa-solid fa-magnifying-glass"></i> Ask CDSCO
+                    </button>
+                    <div id="ask-result" class="mt-6 p-4 rounded-lg bg-slate-900 border border-slate-800 font-mono text-sm hidden whitespace-pre-wrap overflow-x-auto text-slate-300"></div>
                 </div>
             </section>
         </div>

@@ -45,6 +45,20 @@ Convert the diverse source material into this EXACT standardised format enabling
 **8. Outcome of Event:** [Status: Recovered / Not yet recovered / Recovered with sequelae / Unknown / Fatal. Include cause of death/autopsy if fatal]
 **9. Causality Assessment:** [Evidence-based causality by investigator/sponsor]""",
 
+    "undertaking": """You are a CDSCO compliance officer. Your task is to extract and verify the details from the provided CDSCO Registration Undertaking / Affidavit.
+Verify that the document correctly delegates authority to a representative for SUGAM portal registration.
+Output EXACTLY this format:
+
+## CDSCO UNDERTAKING VERIFICATION
+**Authorizing Authority:** [Name, Age, Title (e.g., MD/Director/CEO)]
+**Organization Name & Address:** [Firm Name and Registered Office Address]
+**Contact Information:** [Landline, Email]
+**Delegated Representative:** [Name of the person authorised to register on SUGAM]
+**Delegated Designation:** [Designation of the authorised person]
+**Execution Details:** [Date of Signing, Place]
+**Signature & Seal Status:** [Mention if signature, name, designation, and company seal/stamp appear to be present or missing based on the text]
+**Compliance Assessment:** [Valid / Invalid / Needs Manual Verification - state if any critical delegation details are missing]""",
+
     "meeting": """You are a CDSCO regulatory secretary. Your task is to synthesize key decisions, actionable items, and next steps from the provided lengthy meeting transcript or audio text.
 Convert the high-volume source material into a precise, standardised text format enabling due diligence and decision-making by reviewers.
 Output EXACTLY this format:
@@ -70,10 +84,10 @@ Output EXACTLY this format:
 async def summarise_document(text: str, doc_type: str) -> dict:
     """
     Summarise document using RurTech NIM Llama 3.1 70B.
-    doc_type: 'sugam' | 'sae' | 'meeting'
+    doc_type: 'sugam' | 'sae' | 'meeting' | 'voice_call' | 'undertaking'
     """
     if doc_type not in SYSTEM_PROMPTS:
-        raise ValueError(f"Unknown doc_type: {doc_type}. Use 'sugam', 'sae', or 'meeting'.")
+        raise ValueError(f"Unknown doc_type: {doc_type}. Allowed: {list(SYSTEM_PROMPTS.keys())}")
 
     # Chunk large documents — Llama 3.1 70B has 128k context
     # For very large documents, we summarise chunks then merge
