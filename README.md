@@ -23,28 +23,28 @@ Unlike standard regulatory software, this platform operates on a **zero-trust, f
 
 ---
 
-## ⚙️ Setup & Installation Instructions
+## ⚙️ Setup, Dependencies & Installation
 
-I designed this project to be incredibly easy to spin up. It is separated into a **FastAPI Backend** and a **Vanilla JS Frontend**, both of which run seamlessly together from a single command. 
+I designed this project to be incredibly easy to spin up. It is built on a lightweight **FastAPI** backend and a **Vanilla JS** frontend. Because of the unified architecture, both run seamlessly together from a single command without needing complex build steps.
 
-### Prerequisites
-* Python 3.10 or higher installed on your system.
+### Core Dependencies
+This platform uses the following libraries (all included in `requirements.txt`):
+- `fastapi` & `uvicorn` (For high-performance asynchronous API serving)
+- `openai` (For connecting to the RurTech.ai Core Engine models)
+- `PyMuPDF` (For unstructured document/PDF text extraction)
+- `pydantic` & `python-multipart` (For strict data validation and secure file handling)
 
-### Step 1: Start the Backend & Frontend Server
-The FastAPI backend powers all the core RurTech.ai intelligence models and automatically serves the frontend UI simultaneously.
-1. Open a terminal and navigate to the backend directory:
+### Installation Steps
+1. **Clone the repository** and open your terminal in the root project folder.
+2. **Install all dependencies:**
    ```bash
-   cd regulatory_api
+   pip install -r requirements.txt
    ```
-2. Install the required Python packages:
+3. **Start the Unified Server:**
    ```bash
-   pip install -r ../requirements.txt
+   uvicorn regulatory_api.main:app --host 0.0.0.0 --port 8080
    ```
-3. Run the API Server:
-   ```bash
-   python main.py
-   ```
-   *The server will automatically bind to `0.0.0.0:8080`, allowing it to accept API calls from both your local machine and your local Wi-Fi network.*
+   *The server will automatically bind to `0.0.0.0:8080`, simultaneously serving the backend intelligence and the frontend dashboard across your local Wi-Fi network.*
 
 ---
 
