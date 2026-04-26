@@ -1,19 +1,21 @@
 <div align="center">
   <img src="http://rurtechforarayans.com/wp-content/uploads/2026/04/icon-1.png" alt="RurTech.ai Logo" width="150" />
+<div align="center">
+  <img src="http://rurtechforarayans.com/wp-content/uploads/2026/04/icon-1.png" alt="RurTech.ai Logo" width="150" />
   <h1>CDSCO Regulatory Workflow Automation Platform</h1>
   <p><strong>Developed by RurTech.ai</strong></p>
 </div>
 
 ---
 
-## ?? Live Application Demo
-**Test the live 24/7 Cloud Application here:** ?? [https://huggingface.co/spaces/sad0101/cdsco-ai-kosh](https://huggingface.co/spaces/sad0101/cdsco-ai-kosh)  
+## 🟢 Live Application Demo
+**Test the live 24/7 Cloud Application here:** 👉 [https://cdsco-ai-kosh-production.up.railway.app](https://cdsco-ai-kosh-production.up.railway.app)  
 *(Accessible worldwide from any Desktop or Mobile device. No installation required.)*
 
 ---
 
-## ?? 24/7 Cloud Deployment (100% Free)
-If you want to host this permanently online without any hosting charges or credit cards, the best platform for AI Hackathons is **Hugging Face Spaces**:
+## 📖 Overview
+Welcome to the official repository for the **RurTech.ai CDSCO Regulatory Workflow Automation Platform**. I built this end-to-end, AI-driven automation pipeline to specifically address the critical bottlenecks in the CDSCO regulatory ecosystem. AI Hackathons is **Hugging Face Spaces**:
 1. Go to [Hugging Face Spaces](https://huggingface.co/spaces) and create a free account.
 2. Click **Create new Space**.
 3. Set a name (e.g., cdsco-regulatory-ai).
