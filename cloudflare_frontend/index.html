@@ -36,8 +36,12 @@
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        .conclusion-box { margin-top: 1.5rem; padding: 1.25rem; background: rgba(239, 68, 68, 0.1); border: 2px solid #ef4444; border-radius: 0.75rem; box-shadow: 0 0 20px rgba(239, 68, 68, 0.15); border-left-width: 8px; }
-        .conclusion-label { color: #f87171; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem; margin-bottom: 0.5rem; display: block; }
+        .conclusion-box { margin-top: 1.5rem; padding: 1.25rem; background: rgba(239, 68, 68, 0.12); border: 2px solid #ef4444; border-radius: 0.75rem; box-shadow: 0 0 24px rgba(239, 68, 68, 0.2); border-left-width: 8px; }
+        .conclusion-label { color: #f87171; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.8rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .chat-bubble-user { background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); border-radius: 12px 12px 0 12px; padding: 12px 16px; margin: 8px 0; max-width: 85%; margin-left: auto; }
+        .chat-bubble-ai { background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.25); border-radius: 12px 12px 12px 0; padding: 12px 16px; margin: 8px 0; max-width: 85%; }
+        .voice-pulse { animation: voicePulse 1.5s ease-in-out infinite; }
+        @keyframes voicePulse { 0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); } 50% { box-shadow: 0 0 0 12px rgba(239,68,68,0); } }
     </style>
 </head>
 <body class="h-screen flex overflow-hidden selection:bg-primary selection:text-white">
@@ -79,6 +83,12 @@
             </button>
             <button onclick="switchTab('ask')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition-all text-left">
                 <i class="fa-solid fa-book-open-reader w-5"></i> Ask CDSCO (RAG)
+            </button>
+            <button onclick="switchTab('chat')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition-all text-left">
+                <i class="fa-solid fa-comments w-5"></i> Chat Agent
+            </button>
+            <button onclick="switchTab('pdfgen')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition-all text-left">
+                <i class="fa-solid fa-file-pdf w-5"></i> PDF Generator
             </button>
         </nav>
     </aside>
@@ -263,6 +273,49 @@
                     <div id="ask-result" class="mt-6 p-4 rounded-lg bg-slate-900 border border-slate-800 font-mono text-sm hidden whitespace-pre-wrap overflow-x-auto text-slate-300"></div>
                 </div>
             </section>
+
+            <!-- Chat Agent -->
+            <section id="chat" class="tab-content max-w-4xl mx-auto">
+                <div class="glass-panel p-8 rounded-2xl border border-slate-800 shadow-xl">
+                    <h3 class="text-2xl font-semibold mb-2 flex items-center gap-3"><i class="fa-solid fa-comments text-pink-500"></i> Regulatory Chat Agent</h3>
+                    <p class="text-slate-400 mb-4">Conversational AI for application prep, compliance queries, and reviewer letter drafting. Supports voice input.</p>
+                    <div id="chat-messages" class="h-80 overflow-y-auto p-4 rounded-xl bg-slate-950 border border-slate-800 mb-4 space-y-2">
+                        <div class="chat-bubble-ai text-slate-300 text-sm"><i class="fa-solid fa-robot text-purple-400"></i> Hello! I am the RurTech.ai CDSCO Regulatory Assistant. Ask me about SUGAM applications, NDCT rules, SAE reporting, or ask me to draft a reviewer letter.</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="voice-btn" onclick="toggleVoiceInput()" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2.5 rounded-lg transition-colors" title="Voice Input"><i class="fa-solid fa-microphone"></i></button>
+                        <textarea id="chat-input" rows="1" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 outline-none focus:ring-2 focus:ring-pink-500 resize-none" placeholder="Type or speak your question..."></textarea>
+                        <button onclick="sendChat()" class="bg-pink-600 hover:bg-pink-500 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-pink-500/20"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                    <div class="flex items-center gap-2 mt-2">
+                        <input type="checkbox" id="voice-output" class="accent-pink-500"><label for="voice-output" class="text-xs text-slate-500">Read replies aloud</label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PDF Generator -->
+            <section id="pdfgen" class="tab-content max-w-4xl mx-auto">
+                <div class="glass-panel p-8 rounded-2xl border border-slate-800 shadow-xl">
+                    <h3 class="text-2xl font-semibold mb-2 flex items-center gap-3"><i class="fa-solid fa-file-pdf text-rose-500"></i> CDSCO PDF Report Generator</h3>
+                    <p class="text-slate-400 mb-6">Generate formal computerized reviewer letters to send to applicants.</p>
+                    <div class="space-y-4 mb-6">
+                        <input type="text" id="pdf-title" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 outline-none focus:ring-2 focus:ring-rose-500" placeholder="Subject / Title of the Report" value="Review of SUGAM Application – Deficiency Notice">
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" id="pdf-reviewer" class="bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 outline-none focus:ring-2 focus:ring-rose-500" placeholder="Reviewer Name" value="Dr. Meena Sharma, CDSCO">
+                            <input type="text" id="pdf-applicant" class="bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 outline-none focus:ring-2 focus:ring-rose-500" placeholder="Applicant Name" value="M/s Global Pharma Solutions Ltd.">
+                        </div>
+                        <textarea id="pdf-content" rows="6" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-4 text-slate-200 outline-none focus:ring-2 focus:ring-rose-500 resize-none" placeholder="Body content of the report...">This is to inform you that upon review of your SUGAM portal application, the following deficiencies were noted:
+
+1. Copy of Manufacturing License was not uploaded.
+2. CIN (Corporate Identification Number) field is blank.
+3. The Undertaking document does not bear the company seal.
+
+You are hereby directed to rectify the above deficiencies within 30 days of receipt of this notice, failing which the application shall be returned without further consideration.</textarea>
+                    </div>
+                    <button onclick="generatePDF(this)" class="bg-rose-600 hover:bg-rose-500 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-rose-500/20"><i class="fa-solid fa-file-export"></i> Generate & Download PDF</button>
+                    <div id="pdfgen-result" class="mt-6 p-4 rounded-lg bg-slate-900 border border-slate-800 text-sm hidden text-slate-300"></div>
+                </div>
+            </section>
         </div>
     </main>
 
@@ -288,51 +341,15 @@
             if (tabId === 'biometric') startWebcam();
         }
 
-        // Format Result with Conclusion Highlighting
+        // Format Result — always shows NLP conclusion from backend in red box
         function formatResult(data) {
-            let html = `<pre class="text-xs text-slate-400 font-mono">${JSON.stringify(data, null, 2)}</pre>`;
-            
-            // Extract the 'conclusion' or 'summary' part if it exists
-            let conclusion = "";
-            let summaryText = data.summary || data.answer || "";
-            
-            // Search for structured recommendation strings in the summary text
-            const patterns = [
-                /\*\*Reviewer Recommendation:\*\*\s*(.*)/i,
-                /\*\*Compliance Assessment:\*\*\s*(.*)/i,
-                /\*\*Regulatory Due Diligence:\*\*\s*(.*)/i,
-                /\*\*Safety \/ Compliance Red Flags:\*\*\s*(.*)/i,
-                /\*\*Actionable Next Steps:\*\*\s*(.*)/i,
-                /\*\*Causality Assessment:\*\*\s*(.*)/i
-            ];
-
-            if (summaryText) {
-                for (let p of patterns) {
-                    let match = summaryText.match(p);
-                    if (match) {
-                        conclusion = match[0];
-                        break;
-                    }
-                }
-            }
-
-            // Also check direct JSON keys
-            if (!conclusion) {
-                if (data.reviewer_action) conclusion = `Reviewer Action: ${data.reviewer_action}`;
-                else if (data.status) conclusion = `Final Status: ${data.status}`;
-                else if (data.triage_priority) conclusion = `Triage Priority: ${data.triage_priority}`;
-                else if (data.compliance_percentage) conclusion = `Completeness Score: ${data.compliance_percentage}%`;
-            }
-
+            const clone = Object.assign({}, data);
+            const conclusion = clone.nlp_conclusion;
+            delete clone.nlp_conclusion; // remove from raw JSON display
+            let html = `<pre class="text-xs text-slate-400 font-mono" style="max-height:400px;overflow:auto">${JSON.stringify(clone, null, 2)}</pre>`;
             if (conclusion) {
-                html += `
-                    <div class="conclusion-box">
-                        <span class="conclusion-label"><i class="fa-solid fa-circle-exclamation"></i> Final Regulatory Conclusion</span>
-                        <div class="text-red-100 font-bold text-base leading-relaxed">${conclusion.replace(/\*\*/g, '')}</div>
-                    </div>
-                `;
+                html += `<div class="conclusion-box"><span class="conclusion-label"><i class="fa-solid fa-circle-exclamation"></i> REGULATORY CONCLUSION</span><div class="text-red-100 font-bold text-base leading-relaxed">${conclusion}</div></div>`;
             }
-
             return html;
         }
 
@@ -501,6 +518,108 @@
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }
+        }
+
+        // ===================== CHAT AGENT =====================
+        let chatHistory = [];
+        async function sendChat() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+            const container = document.getElementById('chat-messages');
+            container.innerHTML += `<div class="chat-bubble-user text-blue-200 text-sm">${msg}</div>`;
+            input.value = '';
+            container.scrollTop = container.scrollHeight;
+            container.innerHTML += `<div id="chat-typing" class="chat-bubble-ai text-slate-500 text-sm animate-pulse"><i class="fa-solid fa-robot text-purple-400"></i> Thinking...</div>`;
+            container.scrollTop = container.scrollHeight;
+            chatHistory.push({role: 'user', content: msg});
+            try {
+                const res = await fetch(`${API_BASE}/chat`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: msg, history: chatHistory.slice(-10)})
+                });
+                const data = await res.json();
+                document.getElementById('chat-typing')?.remove();
+                const reply = data.reply || 'No response received.';
+                chatHistory.push({role: 'assistant', content: reply});
+                container.innerHTML += `<div class="chat-bubble-ai text-slate-200 text-sm"><i class="fa-solid fa-robot text-purple-400"></i> ${reply.replace(/\n/g,'<br>')}</div>`;
+                container.scrollTop = container.scrollHeight;
+                if (document.getElementById('voice-output').checked) speakText(reply);
+            } catch(e) {
+                document.getElementById('chat-typing')?.remove();
+                container.innerHTML += `<div class="chat-bubble-ai text-red-400 text-sm">Connection error: ${e.message}</div>`;
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('chat-input')?.addEventListener('keydown', e => { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); } });
+        });
+
+        // ===================== VOICE I/O =====================
+        let recognition = null;
+        let isListening = false;
+        function toggleVoiceInput() {
+            const btn = document.getElementById('voice-btn');
+            if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+                alert('Speech recognition not supported in this browser. Use Chrome.');
+                return;
+            }
+            if (isListening) { recognition.stop(); return; }
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SR();
+            recognition.lang = 'en-IN';
+            recognition.interimResults = false;
+            recognition.onstart = () => { isListening = true; btn.classList.add('voice-pulse'); btn.innerHTML = '<i class="fa-solid fa-stop"></i>'; };
+            recognition.onresult = (e) => { document.getElementById('chat-input').value = e.results[0][0].transcript; };
+            recognition.onend = () => { isListening = false; btn.classList.remove('voice-pulse'); btn.innerHTML = '<i class="fa-solid fa-microphone"></i>'; };
+            recognition.onerror = () => { isListening = false; btn.classList.remove('voice-pulse'); btn.innerHTML = '<i class="fa-solid fa-microphone"></i>'; };
+            recognition.start();
+        }
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const utt = new SpeechSynthesisUtterance(text.replace(/[#*_]/g,'').substring(0, 500));
+            utt.lang = 'en-IN'; utt.rate = 1.0;
+            window.speechSynthesis.speak(utt);
+        }
+
+        // ===================== PDF GENERATOR =====================
+        async function generatePDF(btn) {
+            const resBox = document.getElementById('pdfgen-result');
+            const orig = btn.innerHTML;
+            btn.innerHTML = `<span class="spinner"></span> Generating...`;
+            btn.disabled = true;
+            resBox.classList.remove('hidden');
+            resBox.innerHTML = '<span class="text-slate-500 animate-pulse">Generating official PDF report...</span>';
+            try {
+                const res = await fetch(`${API_BASE}/generate-pdf`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        title: document.getElementById('pdf-title').value,
+                        content: document.getElementById('pdf-content').value,
+                        reviewer_name: document.getElementById('pdf-reviewer').value,
+                        applicant_name: document.getElementById('pdf-applicant').value
+                    })
+                });
+                const data = await res.json();
+                if (res.ok && data.pdf_base64) {
+                    const bytes = atob(data.pdf_base64);
+                    const arr = new Uint8Array(bytes.length);
+                    for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+                    const blob = new Blob([arr], {type: 'application/pdf'});
+                    const url = URL.createObjectURL(blob);
+                    resBox.innerHTML = `
+                        <div class="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
+                            <span class="text-green-400 font-bold"><i class="fa-solid fa-check-circle"></i> PDF Generated Successfully</span>
+                            <p class="text-slate-300 text-sm mt-2">Reference: ${data.reference_number} | Date: ${data.generated_at}</p>
+                            <a href="${url}" download="${data.filename}" class="inline-block mt-3 bg-rose-600 hover:bg-rose-500 text-white px-5 py-2 rounded-lg font-medium text-sm transition-colors"><i class="fa-solid fa-download"></i> Download PDF</a>
+                            <a href="${url}" target="_blank" class="inline-block mt-3 ml-2 bg-slate-700 hover:bg-slate-600 text-white px-5 py-2 rounded-lg font-medium text-sm transition-colors border border-slate-600"><i class="fa-solid fa-eye"></i> Preview</a>
+                        </div>`;
+                } else {
+                    resBox.innerHTML = `<span class="text-red-400">Error</span>\n\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch(e) {
+                resBox.innerHTML = `<span class="text-red-400">Error:</span> ${e.message}`;
+            } finally { btn.innerHTML = orig; btn.disabled = false; }
         }
     </script>
 </body>
