@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDSCO AI Regulatory Workspace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <img src="http://rurtechforarayans.com/wp-content/uploads/2026/04/icon-1.png" alt="RurTech.ai Logo" style="height: 32px; width: 32px; object-fit: contain; border-radius: 4px;">
+                    <h2>RurTech.ai</h2>
+                </div>
+                <p style="font-size: 11px; color: var(--text-muted); line-height: 1.4; margin-top: 5px;">AkhandBharat Architecture of AI using Gen and RAG Transformative Transformers</p>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-target="health-tab"><i class="fa-solid fa-heart-pulse"></i> System Status</li>
+                <li data-target="anonymise-tab"><i class="fa-solid fa-user-secret"></i> Anonymise (PII/PHI)</li>
+                <li data-target="summarise-tab"><i class="fa-solid fa-file-lines"></i> Summarise</li>
+                <li data-target="assess-tab"><i class="fa-solid fa-list-check"></i> Assess Completeness</li>
+                <li data-target="compare-tab"><i class="fa-solid fa-code-compare"></i> Compare Versions</li>
+                <li data-target="classify-tab"><i class="fa-solid fa-triangle-exclamation"></i> Classify SAE</li>
+                <li data-target="inspect-tab"><i class="fa-solid fa-microscope"></i> Site Inspection</li>
+                <li data-target="biometric-tab"><i class="fa-solid fa-face-viewfinder"></i> Biometric Queue</li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            <div class="hero-banner">
+                <div class="banner-overlay">
+                    <div class="banner-badges">
+                        <span class="banner-badge flag-badge">🇮🇳</span>
+                        
+                        <div class="image-badge-container with-text">
+                            <img src="http://rurtechforarayans.com/wp-content/uploads/2026/04/Picture2.jpg" alt="RurTech Inception" class="brand-image-badge">
+                            <span class="disclaimer">Inception Partner</span>
+                        </div>
+                        
+                        <div class="image-badge-container">
+                            <img src="http://rurtechforarayans.com/wp-content/uploads/2026/04/aws-stsartup.png" alt="AWS Activate Startup" class="brand-image-badge">
+                        </div>
+                        
+                        <div class="image-badge-container">
+                            <img src="http://rurtechforarayans.com/wp-content/uploads/2026/04/162936432072800.png" alt="Incubation Center" class="brand-image-badge">
+                        </div>
+                        
+                        <div class="image-badge-container">
+                            <img src="http://rurtechforarayans.com/wp-content/uploads/2026/04/gov-login-img-scaled.png" alt="DPIIT Ministry" class="brand-image-badge">
+                        </div>
+                        
+                        <span class="banner-badge cdsco"><i class="fa-solid fa-staff-snake"></i> CDSCO</span>
+                        
+                        <div class="image-badge-container">
+                            <img src="http://rurtechforarayans.com/wp-content/uploads/2026/04/images.png" alt="Supported by MeitY Startup Hub" class="brand-image-badge">
+                        </div>
+                        
+                        <span class="banner-badge startup-india"><i class="fa-solid fa-rocket"></i> Startup India</span>
+                        
+                        <div class="image-badge-container">
+                            <img src="http://rurtechforarayans.com/wp-content/uploads/2026/04/1631003581247.jpg" alt="UP Startup" class="brand-image-badge">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="legal-disclaimer-box">
+                <strong>Disclaimer:</strong> RurTech.ai is an independent company. The display of government logos (DPIIT, CDSCO, MeitY, UP Startup, Startup India) is out of respect to signify our formal registrations and alignment with national initiatives. It does not imply that RurTech.ai is a government subsidiary or that any government body holds equity in the company. Additionally, the RurTech Inception and AWS Activate badges denote our formal acceptance into their startup programs, where they act as technology accelerators and validators for our AI models.
+            </div>
+
+            <header class="top-header">
+                <h1>Regulatory Intelligence Dashboard</h1>
+                <div class="header-badges">
+                    <span class="badge RurTech-badge"><i class="fa-solid fa-microchip"></i> Powered by RurTech NIM</span>
+                </div>
+            </header>
+
+            <div class="tab-content-container">
+                <!-- System Status Tab -->
+                <section id="health-tab" class="tab-pane active fade-in">
+                    <div class="card">
+                        <h3><i class="fa-solid fa-server"></i> Backend Connection</h3>
+                        <p>Check if the FastAPI backend is running and accessible.</p>
+                        <button class="btn btn-primary" onclick="checkHealth()">Test Connection</button>
+                        <div id="health-result" class="result-box hidden"></div>
+                    </div>
+                </section>
+
+                <!-- Anonymise Tab -->
+                <section id="anonymise-tab" class="tab-pane fade-in">
+                    <div class="card">
+                        <h3><i class="fa-solid fa-user-secret"></i> Document Anonymisation</h3>
+                        <p>Redact PII/PHI automatically complying with DPDP Act 2023.</p>
+                        <textarea id="anonymise-input" rows="5" placeholder="Enter patient data, clinical notes, etc.">Patient Ram Kumar, aged 45, phone +91 9876543210, admitted for testing.</textarea>
+                        <button class="btn btn-primary" onclick="runApi('anonymise', {text: document.getElementById('anonymise-input').value})">Anonymise Text</button>
+                        <div id="anonymise-result" class="result-box hidden"></div>
+                    </div>
+                </section>
+
+                <!-- Summarise Tab -->
+                <section id="summarise-tab" class="tab-pane fade-in">
+                    <div class="card">
+                        <h3><i class="fa-solid fa-file-lines"></i> Intelligent Document Summarisation</h3>
+                        <p>Extract and synthesize critical regulatory info from diverse, high-volume source documents.</p>
+                        
+                        <select id="summarise-type" class="input-select">
+                            <option value="sugam">SUGAM Application Data (Multiple Checklists)</option>
+                            <option value="sae">SAE Case Narration (Workflows)</option>
+                            <option value="meeting">Meeting Transcripts & Audio Summaries</option>
+                            <option value="voice_call">Voice Call (Telephonic Contextual Analysis)</option>
+                        </select>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+                            <textarea id="summarise-input" rows="5" placeholder="Paste document content, notes, or transcript here..." style="margin-bottom: 0;"></textarea>
+                            
+                            <div style="display: flex; align-items: center; gap: 15px; background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                                <span style="color: var(--text-muted); font-size: 13px; font-weight: 500;"><i class="fa-solid fa-upload"></i> OR Upload File (PDF, TXT, WAV, MP3):</span>
+                                <input type="file" id="summarise-file" class="input-file" accept=".pdf,.txt,.wav,.mp3,.m4a" style="margin-bottom: 0; border: none; padding: 0;">
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-primary" onclick="runApi('summarise', {text: document.getElementById('summarise-input').value, doc_type: document.getElementById('summarise-type').value})">Summarise Text</button>
+                            <button class="btn btn-secondary" onclick="uploadSummariseFile()">Upload & Summarise File</button>
+                        </div>
+                        
+                        <div id="summarise-result" class="result-box hidden"></div>
+                    </div>
+                </section>
+
+                <!-- Assess Completeness Tab -->
+                <section id="assess-tab" class="tab-pane fade-in">
+                    <div class="card">
+                        <h3><i class="fa-solid fa-list-check"></i> Application Completeness Assessment</h3>
+                        <p>Evaluate application text against mandatory CDSCO SUGAM fields.</p>
+                        <textarea id="assess-input" rows="5" placeholder="Paste application content...">Applicant Name: Pharma Inc. Drug Name: CureAll. Indication: Headache. Phase: 3. Protocol Title: A study on CureAll.</textarea>
+                        <button class="btn btn-primary" onclick="runApi('assess', {text: document.getElementById('assess-input').value})">Assess Document</button>
+                        <div id="assess-result" class="result-box hidden"></div>
+                    </div>
+                </section>
+
+                <!-- Compare Versions Tab -->
+                <section id="compare-tab" class="tab-pane fade-in">
+                    <div class="card">
+                        <h3><i class="fa-solid fa-code-compare"></i> Document Version Comparison</h3>
+                        <p>Detect semantic changes between V1 and V2 of clinical trial protocols.</p>
+                        <div class="split-inputs">
+                            <textarea id="compare-v1" rows="5" placeholder="Version 1 text...">The trial will enroll 100 patients. Dosage is 50mg daily.</textarea>
+                            <textarea id="compare-v2" rows="5" placeholder="Version 2 text...">The trial will enroll 150 patients. Dosage is 100mg daily. Added safety monitoring.</textarea>
+                        </div>
+                        <button class="btn btn-primary mt-3" onclick="runApi('compare', {document_v1: document.getElementById('compare-v1').value, document_v2: document.getElementById('compare-v2').value, similarity_threshold: 0.85})">Compare Versions</button>
+                        <div id="compare-result" class="result-box hidden"></div>
+                    </div>
+                </section>
+
+                <!-- Classify SAE Tab -->
+                <section id="classify-tab" class="tab-pane fade-in">
+                    <div class="card">
+                        <h3><i class="fa-solid fa-triangle-exclamation"></i> Classification & Prioritisation Tool</h3>
+                        <p>Classify cases by severity (death, disability, hospitalisation, others), detect duplicates, and help officers with prioritisation for efficient review.</p>
+                        <input type="text" id="classify-id" class="input-text mb-2" placeholder="Case ID (e.g. CASE123)" value="CASE123">
+                        <textarea id="classify-input" rows="5" placeholder="Describe the adverse event...">Patient experienced severe allergic reaction and was hospitalised for 3 days after taking the medication.</textarea>
+                        <button class="btn btn-primary" onclick="runApi('classify', {case_id: document.getElementById('classify-id').value, text: document.getElementById('classify-input').value})">Classify & Triage</button>
+                        <div id="classify-result" class="result-box hidden"></div>
+                    </div>
+                </section>
+
+                <!-- Site Inspection Tab -->
+                <section id="inspect-tab" class="tab-pane fade-in">
+                    <div class="card mb-3">
+                        <h3><i class="fa-solid fa-camera"></i> Inspection Report Generation (VLM)</h3>
+                        <p>Convert unstructured and handwritten observations gathered during site inspections into standardised, formal reports conforming to CDSCO inspection templates.</p>
+                        <input type="file" id="inspect-image-file" class="input-file" accept="image/*" capture="environment">
+                        <button class="btn btn-primary mt-2" onclick="uploadImage()">Generate Report from Handwritten Notes</button>
+                        <div id="inspect-image-result" class="result-box hidden"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3><i class="fa-solid fa-keyboard"></i> Text-based Report Generation</h3>
+                        <p>Alternatively, generate the standardised formal report from unstructured typed notes.</p>
+                        <textarea id="inspect-text-input" rows="5" placeholder="Paste raw notes...">Site visit on 12 Oct 2023 at City Hospital. Dr. Smith was present. Found missing consent forms for 3 patients. Otherwise things looked good.</textarea>
+                        <button class="btn btn-secondary" onclick="runApi('inspect/text', {raw_notes: document.getElementById('inspect-text-input').value})">Generate Text Report</button>
+                        <div id="inspect-text-result" class="result-box hidden"></div>
+                    </div>
+                </section>
+
+                <!-- Biometric Queue Tab -->
+                <section id="biometric-tab" class="tab-pane fade-in">
+                    <div class="card">
+                        <h3><i class="fa-solid fa-face-viewfinder"></i> Live Biometric Identification Engine</h3>
+                        <p>Live facial recognition powered by RurTech.ai Neural Engine. Contextual data synthesis powered by LLaMA 4 RurTech.ai Core and RurTech.ai Secure Cloud Datastore.</p>
+                        
+                        <div style="display: flex; gap: 20px; align-items: flex-start; margin-top: 20px;">
+                            <div style="flex: 1; text-align: center; background: rgba(15, 23, 42, 0.6); padding: 16px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                <video id="webcam-video" width="100%" autoplay playsinline style="border-radius: 8px; border: 2px solid #334155; background: #000; min-height: 240px;"></video>
+                                <button class="btn btn-primary mt-3" onclick="captureAndIdentify()" style="width: 100%; justify-content: center;"><i class="fa-solid fa-camera"></i> Capture Desktop Webcam</button>
+                                
+                                <p style="color: var(--text-muted); font-size: 12px; margin-top: 15px; margin-bottom: 8px;">📱 <strong>Mobile Access Mode:</strong></p>
+                                <input type="file" id="mobile-biometric-file" accept="image/*" capture="user" style="display: none;" onchange="uploadMobileBiometric(this)">
+                                <button class="btn btn-secondary" onclick="document.getElementById('mobile-biometric-file').click()" style="width: 100%; justify-content: center;"><i class="fa-solid fa-mobile-screen"></i> Take Photo with Phone</button>
+                                
+                                <canvas id="webcam-canvas" style="display: none;"></canvas>
+                            </div>
+                            
+                            <div style="flex: 1;">
+                                <div id="biometric-result" class="result-box hidden" style="margin-top: 0; min-height: 240px; border: 1px solid rgba(255, 255, 255, 0.1);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
