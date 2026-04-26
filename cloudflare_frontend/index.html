@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDSCO AI Regulatory Workspace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#1e293b',
+                        accent: '#8b5cf6',
+                        dark: '#0f172a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #020617; color: #f8fafc; font-family: 'Inter', sans-serif; }
+        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .spinner { border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top: 3px solid #fff; width: 16px; height: 16px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    </style>
+</head>
+<body class="h-screen flex overflow-hidden selection:bg-primary selection:text-white">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-72 glass-panel border-r border-slate-800 flex flex-col h-full z-10 shadow-2xl">
+        <div class="p-6 border-b border-slate-800">
+            <div class="flex items-center gap-3">
+                <img src="http://rurtechforarayans.com/wp-content/uploads/2026/04/icon-1.png" alt="Logo" class="w-10 h-10 rounded shadow-lg border border-slate-700">
+                <h2 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">RurTech.ai</h2>
+            </div>
+            <p class="text-xs text-slate-400 mt-3 leading-relaxed">AkhandBharat Architecture of AI using Gen & RAG Transformative Transformers</p>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto p-4 space-y-1" id="nav-tabs">
+            <button onclick="switchTab('health')" class="tab-btn active w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30 transition-all text-left">
+                <i class="fa-solid fa-heart-pulse w-5"></i> System Status
+            </button>
+            <button onclick="switchTab('anonymise')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition-all text-left">
+                <i class="fa-solid fa-user-secret w-5"></i> Anonymise (PII/PHI)
+            </button>
+            <button onclick="switchTab('summarise')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition-all text-left">
+                <i class="fa-solid fa-file-lines w-5"></i> Summarise
+            </button>
+            <button onclick="switchTab('assess')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition-all text-left">
+                <i class="fa-solid fa-list-check w-5"></i> Assess Completeness
+            </button>
+            <button onclick="switchTab('compare')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition-all text-left">
+                <i class="fa-solid fa-code-compare w-5"></i> Compare Versions
+            </button>
+            <button onclick="switchTab('classify')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition-all text-left">
+                <i class="fa-solid fa-triangle-exclamation w-5"></i> Classify SAE
+            </button>
+            <button onclick="switchTab('inspect')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition-all text-left">
+                <i class="fa-solid fa-microscope w-5"></i> Site Inspection
+            </button>
+            <button onclick="switchTab('biometric')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition-all text-left">
+                <i class="fa-solid fa-face-viewfinder w-5"></i> Biometric Queue
+            </button>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        <!-- Abstract Background -->
+        <div class="absolute inset-0 z-0 opacity-20 pointer-events-none" style="background: radial-gradient(circle at top right, #3b82f6 0%, transparent 40%), radial-gradient(circle at bottom left, #8b5cf6 0%, transparent 40%);"></div>
+
+        <!-- Top Header -->
+        <header class="h-16 glass-panel border-b border-slate-800 flex items-center justify-between px-8 z-10">
+            <h1 class="text-lg font-semibold text-slate-200">Regulatory Intelligence Dashboard</h1>
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-xs font-medium text-purple-400 shadow-inner">
+                <i class="fa-solid fa-microchip"></i> Powered by RurTech NIM Cloud
+            </div>
+        </header>
+
+        <!-- Dynamic Content Area -->
+        <div class="flex-1 overflow-y-auto p-8 z-10" id="main-content">
+            
+            <!-- Health Tab -->
+            <section id="health" class="tab-content active max-w-4xl mx-auto">
+                <div class="glass-panel p-8 rounded-2xl border border-slate-800 shadow-xl">
+                    <h3 class="text-2xl font-semibold mb-2 flex items-center gap-3"><i class="fa-solid fa-server text-blue-500"></i> API Connection Check</h3>
+                    <p class="text-slate-400 mb-6">Verify real-time connectivity to the Railway Python Backend.</p>
+                    <button onclick="checkHealth(this)" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-blue-500/20 flex items-center gap-2">
+                        Test Connection
+                    </button>
+                    <div id="health-result" class="mt-6 p-4 rounded-lg bg-slate-900 border border-slate-800 font-mono text-sm hidden whitespace-pre-wrap overflow-x-auto text-slate-300"></div>
+                </div>
+            </section>
+
+            <!-- Anonymise Tab -->
+            <section id="anonymise" class="tab-content max-w-4xl mx-auto">
+                <div class="glass-panel p-8 rounded-2xl border border-slate-800 shadow-xl">
+                    <h3 class="text-2xl font-semibold mb-2 flex items-center gap-3"><i class="fa-solid fa-user-secret text-purple-500"></i> DPDP Act Anonymisation</h3>
+                    <p class="text-slate-400 mb-6">Redact PII/PHI automatically before storing clinical notes.</p>
+                    <textarea id="anonymise-input" rows="4" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-4 text-slate-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all resize-none mb-4" placeholder="Enter patient clinical notes...">Patient Ram Kumar, aged 45, phone +91 9876543210, admitted for testing.</textarea>
+                    <button onclick="runApi('anonymise', {text: document.getElementById('anonymise-input').value}, this, 'anonymise-result')" class="bg-purple-600 hover:bg-purple-500 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-purple-500/20">
+                        Anonymise Text
+                    </button>
+                    <div id="anonymise-result" class="mt-6 p-4 rounded-lg bg-slate-900 border border-slate-800 font-mono text-sm hidden whitespace-pre-wrap overflow-x-auto text-slate-300"></div>
+                </div>
+            </section>
+
+            <!-- Summarise Tab -->
+            <section id="summarise" class="tab-content max-w-4xl mx-auto">
+                <div class="glass-panel p-8 rounded-2xl border border-slate-800 shadow-xl">
+                    <h3 class="text-2xl font-semibold mb-2 flex items-center gap-3"><i class="fa-solid fa-file-lines text-green-500"></i> Intelligent Document Summarisation</h3>
+                    <p class="text-slate-400 mb-6">Extract critical regulatory insights directly from unstructured files.</p>
+                    
+                    <div class="space-y-4 mb-6">
+                        <select id="summarise-type" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 outline-none focus:ring-2 focus:ring-green-500">
+                            <option value="sugam">SUGAM Application Data</option>
+                            <option value="sae">SAE Case Narration</option>
+                            <option value="meeting">Meeting Transcripts</option>
+                        </select>
+                        
+                        <textarea id="summarise-input" rows="4" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-4 text-slate-200 outline-none focus:ring-2 focus:ring-green-500 resize-none" placeholder="Paste raw text here..."></textarea>
+                        
+                        <div class="flex items-center gap-4 bg-slate-900 border border-slate-700 p-3 rounded-lg">
+                            <span class="text-sm font-medium text-slate-400 whitespace-nowrap"><i class="fa-solid fa-upload"></i> OR Upload PDF:</span>
+                            <input type="file" id="summarise-file" class="text-sm text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-500/10 file:text-green-400 hover:file:bg-green-500/20 cursor-pointer">
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <button onclick="runApi('summarise', {text: document.getElementById('summarise-input').value, doc_type: document.getElementById('summarise-type').value}, this, 'summarise-result')" class="bg-green-600 hover:bg-green-500 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-green-500/20">
+                            Summarise Text
+                        </button>
+                        <button onclick="uploadSummariseFile(this)" class="bg-slate-700 hover:bg-slate-600 text-white px-6 py-2.5 rounded-lg font-medium transition-colors border border-slate-600">
+                            Process File
+                        </button>
+                    </div>
+                    <div id="summarise-result" class="mt-6 p-4 rounded-lg bg-slate-900 border border-slate-800 font-mono text-sm hidden whitespace-pre-wrap overflow-x-auto text-slate-300"></div>
+                </div>
+            </section>
+
+            <!-- Assess Completeness -->
+            <section id="assess" class="tab-content max-w-4xl mx-auto">
+                <div class="glass-panel p-8 rounded-2xl border border-slate-800 shadow-xl">
+                    <h3 class="text-2xl font-semibold mb-2 flex items-center gap-3"><i class="fa-solid fa-list-check text-orange-500"></i> Checklist Completeness</h3>
+                    <p class="text-slate-400 mb-6">Cross-reference application fields automatically.</p>
+                    <textarea id="assess-input" rows="4" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-4 text-slate-200 outline-none focus:ring-2 focus:ring-orange-500 resize-none mb-4" placeholder="Application text...">Applicant Name: Pharma Inc. Drug Name: CureAll. Phase: 3.</textarea>
+                    <button onclick="runApi('assess', {text: document.getElementById('assess-input').value}, this, 'assess-result')" class="bg-orange-600 hover:bg-orange-500 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-orange-500/20">
+                        Assess Application
+                    </button>
+                    <div id="assess-result" class="mt-6 p-4 rounded-lg bg-slate-900 border border-slate-800 font-mono text-sm hidden whitespace-pre-wrap overflow-x-auto text-slate-300"></div>
+                </div>
+            </section>
+
+            <!-- Compare Versions -->
+            <section id="compare" class="tab-content max-w-4xl mx-auto">
+                <div class="glass-panel p-8 rounded-2xl border border-slate-800 shadow-xl">
+                    <h3 class="text-2xl font-semibold mb-2 flex items-center gap-3"><i class="fa-solid fa-code-compare text-teal-500"></i> Version Intelligence</h3>
+                    <p class="text-slate-400 mb-6">Detect semantic changes between clinical protocols.</p>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <textarea id="compare-v1" rows="4" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-4 text-slate-200 outline-none focus:ring-2 focus:ring-teal-500 resize-none" placeholder="Version 1 text...">The trial enrolls 100 patients.</textarea>
+                        <textarea id="compare-v2" rows="4" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-4 text-slate-200 outline-none focus:ring-2 focus:ring-teal-500 resize-none" placeholder="Version 2 text...">The trial enrolls 150 patients. Added safety rules.</textarea>
+                    </div>
+                    <button onclick="runApi('compare', {document_v1: document.getElementById('compare-v1').value, document_v2: document.getElementById('compare-v2').value, similarity_threshold: 0.85}, this, 'compare-result')" class="bg-teal-600 hover:bg-teal-500 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-teal-500/20">
+                        Compare Documents
+                    </button>
+                    <div id="compare-result" class="mt-6 p-4 rounded-lg bg-slate-900 border border-slate-800 font-mono text-sm hidden whitespace-pre-wrap overflow-x-auto text-slate-300"></div>
+                </div>
+            </section>
+
+            <!-- Classify SAE -->
+            <section id="classify" class="tab-content max-w-4xl mx-auto">
+                <div class="glass-panel p-8 rounded-2xl border border-slate-800 shadow-xl">
+                    <h3 class="text-2xl font-semibold mb-2 flex items-center gap-3"><i class="fa-solid fa-triangle-exclamation text-red-500"></i> SAE Classification</h3>
+                    <p class="text-slate-400 mb-6">Triage and classify Serious Adverse Events autonomously.</p>
+                    <input type="text" id="classify-id" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 outline-none focus:ring-2 focus:ring-red-500 mb-4" placeholder="Case ID" value="CASE-909">
+                    <textarea id="classify-input" rows="4" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-4 text-slate-200 outline-none focus:ring-2 focus:ring-red-500 resize-none mb-4" placeholder="Describe adverse event...">Patient required hospitalisation due to allergic reaction.</textarea>
+                    <button onclick="runApi('classify', {case_id: document.getElementById('classify-id').value, text: document.getElementById('classify-input').value}, this, 'classify-result')" class="bg-red-600 hover:bg-red-500 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-red-500/20">
+                        Classify SAE
+                    </button>
+                    <div id="classify-result" class="mt-6 p-4 rounded-lg bg-slate-900 border border-slate-800 font-mono text-sm hidden whitespace-pre-wrap overflow-x-auto text-slate-300"></div>
+                </div>
+            </section>
+
+            <!-- Site Inspection -->
+            <section id="inspect" class="tab-content max-w-4xl mx-auto">
+                <div class="glass-panel p-8 rounded-2xl border border-slate-800 shadow-xl">
+                    <h3 class="text-2xl font-semibold mb-2 flex items-center gap-3"><i class="fa-solid fa-microscope text-indigo-500"></i> AI Vision Inspection Reports</h3>
+                    <p class="text-slate-400 mb-6">Convert handwritten notes into formatted CDSCO reports.</p>
+                    
+                    <div class="bg-slate-900 border border-slate-700 p-4 rounded-lg mb-4">
+                        <label class="block text-sm font-medium text-slate-400 mb-2">Upload Handwritten Note (Image):</label>
+                        <input type="file" id="inspect-image" accept="image/*" class="text-sm text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-500/10 file:text-indigo-400 hover:file:bg-indigo-500/20 cursor-pointer">
+                    </div>
+                    
+                    <button onclick="uploadImage(this)" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-indigo-500/20 mb-6">
+                        Analyse Image with Vision
+                    </button>
+
+                    <hr class="border-slate-800 mb-6">
+
+                    <p class="text-slate-400 mb-2">Or paste typed raw notes:</p>
+                    <textarea id="inspect-text" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-4 text-slate-200 outline-none focus:ring-2 focus:ring-indigo-500 resize-none mb-4" placeholder="Typed notes..."></textarea>
+                    <button onclick="runApi('inspect/text', {raw_notes: document.getElementById('inspect-text').value}, this, 'inspect-result')" class="bg-slate-700 hover:bg-slate-600 text-white px-6 py-2.5 rounded-lg font-medium transition-colors border border-slate-600">
+                        Generate from Text
+                    </button>
+
+                    <div id="inspect-result" class="mt-6 p-4 rounded-lg bg-slate-900 border border-slate-800 font-mono text-sm hidden whitespace-pre-wrap overflow-x-auto text-slate-300"></div>
+                </div>
+            </section>
+
+            <!-- Biometric Queue -->
+            <section id="biometric" class="tab-content max-w-4xl mx-auto">
+                <div class="glass-panel p-8 rounded-2xl border border-slate-800 shadow-xl">
+                    <h3 class="text-2xl font-semibold mb-2 flex items-center gap-3"><i class="fa-solid fa-face-viewfinder text-cyan-500"></i> Facial Recognition Tokenization</h3>
+                    <p class="text-slate-400 mb-6">Secure blockchain tokenization of biometric identities.</p>
+                    
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="flex-1 bg-slate-900 border border-slate-700 p-4 rounded-xl flex flex-col items-center">
+                            <video id="webcam" class="w-full bg-black rounded-lg border-2 border-slate-800 h-48 object-cover mb-4" autoplay playsinline></video>
+                            <canvas id="canvas" class="hidden"></canvas>
+                            <button onclick="captureBiometric(this)" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-cyan-500/20 mb-3 flex justify-center items-center gap-2">
+                                <i class="fa-solid fa-camera"></i> Scan Face
+                            </button>
+                            <p class="text-xs text-slate-500 text-center">Uses RurTech.ai Secure Edge SDK</p>
+                        </div>
+                        <div class="flex-1 flex flex-col">
+                            <div id="biometric-result" class="flex-1 p-4 rounded-lg bg-slate-900 border border-slate-800 font-mono text-sm hidden whitespace-pre-wrap overflow-y-auto text-slate-300 min-h-[200px]"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Core Javascript API Integration -->
+    <script>
+        // POINT THIS TO THE RAILWAY BACKEND
+        const API_BASE = "https://cdsco-ai-kosh-production.up.railway.app";
+        
+        // Tab Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active', 'bg-blue-600/20', 'text-blue-400', 'border-blue-500/30');
+                el.classList.add('text-slate-400');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            const btn = document.querySelector(`[onclick="switchTab('${tabId}')"]`);
+            btn.classList.remove('text-slate-400');
+            btn.classList.add('active', 'bg-blue-600/20', 'text-blue-400', 'border-blue-500/30');
+
+            // Handle webcam specifically
+            if (tabId === 'biometric') startWebcam();
+        }
+
+        // Generic API Caller
+        async function runApi(endpoint, payload, btn, resultId) {
+            const resBox = document.getElementById(resultId);
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<span class="spinner"></span> Processing...`;
+            btn.disabled = true;
+            resBox.classList.remove('hidden');
+            resBox.innerHTML = '<span class="text-slate-500 animate-pulse">Awaiting RurTech NIM Server...</span>';
+
+            try {
+                const response = await fetch(`${API_BASE}/${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    resBox.innerHTML = `<span class="text-green-400 font-bold">Success (200 OK)</span>\n\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resBox.innerHTML = `<span class="text-red-400 font-bold">Error (${response.status})</span>\n\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resBox.innerHTML = `<span class="text-red-400 font-bold">Connection Failed:</span>\nEnsure ${API_BASE} is live. Error: ${error.message}`;
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Health Check Caller
+        async function checkHealth(btn) {
+            const resBox = document.getElementById('health-result');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<span class="spinner"></span> Checking...`;
+            btn.disabled = true;
+            resBox.classList.remove('hidden');
+
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                resBox.innerHTML = `<span class="text-green-400 font-bold">Backend is Online</span>\n\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resBox.innerHTML = `<span class="text-red-400 font-bold">Backend Offline</span>\nError: ${error.message}`;
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // File Uploader
+        async function uploadSummariseFile(btn) {
+            const fileInput = document.getElementById('summarise-file');
+            if (!fileInput.files.length) return alert("Select a file.");
+            
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('doc_type', document.getElementById('summarise-type').value);
+
+            const resBox = document.getElementById('summarise-result');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<span class="spinner"></span> Uploading...`;
+            btn.disabled = true;
+            resBox.classList.remove('hidden');
+            resBox.innerHTML = '<span class="text-slate-500">Uploading and processing document...</span>';
+
+            try {
+                const response = await fetch(`${API_BASE}/summarise/file`, { method: 'POST', body: formData });
+                const data = await response.json();
+                resBox.innerHTML = response.ok ? `<span class="text-green-400">Success</span>\n\n${JSON.stringify(data, null, 2)}` : `<span class="text-red-400">Error</span>\n\n${JSON.stringify(data, null, 2)}`;
+            } catch (e) {
+                resBox.innerHTML = `<span class="text-red-400">Error:</span> ${e.message}`;
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        async function uploadImage(btn) {
+            const fileInput = document.getElementById('inspect-image');
+            if (!fileInput.files.length) return alert("Select an image.");
+            
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            const resBox = document.getElementById('inspect-result');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<span class="spinner"></span> Analysing...`;
+            btn.disabled = true;
+            resBox.classList.remove('hidden');
+            resBox.innerHTML = '<span class="text-slate-500">Processing Vision Model...</span>';
+
+            try {
+                const response = await fetch(`${API_BASE}/inspect/image`, { method: 'POST', body: formData });
+                const data = await response.json();
+                resBox.innerHTML = response.ok ? `<span class="text-green-400">Success</span>\n\n${JSON.stringify(data, null, 2)}` : `<span class="text-red-400">Error</span>\n\n${JSON.stringify(data, null, 2)}`;
+            } catch (e) {
+                resBox.innerHTML = `<span class="text-red-400">Error:</span> ${e.message}`;
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // Biometric logic
+        let stream = null;
+        async function startWebcam() {
+            const video = document.getElementById('webcam');
+            if (!stream && navigator.mediaDevices) {
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    video.srcObject = stream;
+                } catch (e) {
+                    document.getElementById('biometric-result').innerHTML = `<span class="text-red-400">Webcam Denied.</span>`;
+                    document.getElementById('biometric-result').classList.remove('hidden');
+                }
+            }
+        }
+
+        async function captureBiometric(btn) {
+            const video = document.getElementById('webcam');
+            const canvas = document.getElementById('canvas');
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            
+            const base64 = canvas.toDataURL('image/jpeg').split(',')[1];
+            if (!base64) return;
+
+            const resBox = document.getElementById('biometric-result');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<span class="spinner"></span> Scanning...`;
+            btn.disabled = true;
+            resBox.classList.remove('hidden');
+            resBox.innerHTML = '<span class="text-slate-500 animate-pulse">Running Neural Engine...</span>';
+
+            try {
+                const response = await fetch(`${API_BASE}/biometric/identify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image_base64: base64 })
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resBox.innerHTML = `
+                        <div class="mb-4 p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                            <strong class="text-green-400"><i class="fa-solid fa-robot"></i> RurTech Context:</strong>
+                            <p class="mt-2 text-white italic">"${data['RurTech.ai Core_contextual_greeting']}"</p>
+                        </div>
+                        <div class="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                            <strong class="text-blue-400"><i class="fa-brands fa-hive"></i> Blockchain Token</strong>
+                            <p class="mt-1 text-xs text-slate-300">Token: ${data.tokenizer_pseudonymisation}</p>
+                            <p class="text-xs text-slate-300">Hash: ${data.blockchain_registry.transaction_hash}</p>
+                        </div>
+                        <pre class="text-xs text-slate-400">${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resBox.innerHTML = `<span class="text-red-400">Error</span>\n\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (e) {
+                resBox.innerHTML = `<span class="text-red-400">Error:</span> ${e.message}`;
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
