@@ -15,7 +15,7 @@
 ---
 
 ## 📖 Overview
-Welcome to the official repository for the **RurTech.ai CDSCO Regulatory Workflow Automation Platform**. I built this end-to-end, AI-driven automation pipeline to specifically address the critical bottlenecks in the CDSCO regulatory ecosystem. AI Hackathons is **Hugging Face Spaces**:
+Welcome to the official repository for the **RurTech.ai CDSCO Regulatory Workflow Automation Platform**. I built this end-to-end, AI-driven automation pipeline to specifically address the critical bottlenecks in the CDSCO regulatory ecosystem.
 1. Go to [Hugging Face Spaces](https://huggingface.co/spaces) and create a free account.
 2. Click **Create new Space**.
 3. Set a name (e.g., cdsco-regulatory-ai).
@@ -25,4 +25,5 @@ Welcome to the official repository for the **RurTech.ai CDSCO Regulatory Workflo
 7. Hugging Face will automatically detect the Dockerfile and build the application for free!
 
 Within minutes, you will get a live https://huggingface.co/spaces/... link. Both the frontend and backend are automatically served together, accessible from any mobile phone worldwide, 24/7!
+
 
