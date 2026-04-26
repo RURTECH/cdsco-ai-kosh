@@ -14,4 +14,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Run the web service on container startup using uvicorn.
 # Render/Cloud Run injects the PORT environment variable.
-CMD ["sh", "-c", "uvicorn regulatory_api.main:app --host 0.0.0.0 --port ${PORT:-8080}"]
+CMD ["sh", "-c", "cd regulatory_api && uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080}"]
