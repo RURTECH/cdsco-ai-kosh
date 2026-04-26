@@ -36,6 +36,8 @@
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .conclusion-box { margin-top: 1.5rem; padding: 1.25rem; background: rgba(239, 68, 68, 0.1); border: 2px solid #ef4444; border-radius: 0.75rem; box-shadow: 0 0 20px rgba(239, 68, 68, 0.15); border-left-width: 8px; }
+        .conclusion-label { color: #f87171; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem; margin-bottom: 0.5rem; display: block; }
     </style>
 </head>
 <body class="h-screen flex overflow-hidden selection:bg-primary selection:text-white">
@@ -286,6 +288,54 @@
             if (tabId === 'biometric') startWebcam();
         }
 
+        // Format Result with Conclusion Highlighting
+        function formatResult(data) {
+            let html = `<pre class="text-xs text-slate-400 font-mono">${JSON.stringify(data, null, 2)}</pre>`;
+            
+            // Extract the 'conclusion' or 'summary' part if it exists
+            let conclusion = "";
+            let summaryText = data.summary || data.answer || "";
+            
+            // Search for structured recommendation strings in the summary text
+            const patterns = [
+                /\*\*Reviewer Recommendation:\*\*\s*(.*)/i,
+                /\*\*Compliance Assessment:\*\*\s*(.*)/i,
+                /\*\*Regulatory Due Diligence:\*\*\s*(.*)/i,
+                /\*\*Safety \/ Compliance Red Flags:\*\*\s*(.*)/i,
+                /\*\*Actionable Next Steps:\*\*\s*(.*)/i,
+                /\*\*Causality Assessment:\*\*\s*(.*)/i
+            ];
+
+            if (summaryText) {
+                for (let p of patterns) {
+                    let match = summaryText.match(p);
+                    if (match) {
+                        conclusion = match[0];
+                        break;
+                    }
+                }
+            }
+
+            // Also check direct JSON keys
+            if (!conclusion) {
+                if (data.reviewer_action) conclusion = `Reviewer Action: ${data.reviewer_action}`;
+                else if (data.status) conclusion = `Final Status: ${data.status}`;
+                else if (data.triage_priority) conclusion = `Triage Priority: ${data.triage_priority}`;
+                else if (data.compliance_percentage) conclusion = `Completeness Score: ${data.compliance_percentage}%`;
+            }
+
+            if (conclusion) {
+                html += `
+                    <div class="conclusion-box">
+                        <span class="conclusion-label"><i class="fa-solid fa-circle-exclamation"></i> Final Regulatory Conclusion</span>
+                        <div class="text-red-100 font-bold text-base leading-relaxed">${conclusion.replace(/\*\*/g, '')}</div>
+                    </div>
+                `;
+            }
+
+            return html;
+        }
+
         // Generic API Caller
         async function runApi(endpoint, payload, btn, resultId) {
             const resBox = document.getElementById(resultId);
@@ -303,7 +353,7 @@
                 });
                 const data = await response.json();
                 if (response.ok) {
-                    resBox.innerHTML = `<span class="text-green-400 font-bold">Success (200 OK)</span>\n\n${JSON.stringify(data, null, 2)}`;
+                    resBox.innerHTML = `<span class="text-green-400 font-bold mb-2 block">Success (200 OK)</span>` + formatResult(data);
                 } else {
                     resBox.innerHTML = `<span class="text-red-400 font-bold">Error (${response.status})</span>\n\n${JSON.stringify(data, null, 2)}`;
                 }
@@ -354,7 +404,7 @@
             try {
                 const response = await fetch(`${API_BASE}/summarise/file`, { method: 'POST', body: formData });
                 const data = await response.json();
-                resBox.innerHTML = response.ok ? `<span class="text-green-400">Success</span>\n\n${JSON.stringify(data, null, 2)}` : `<span class="text-red-400">Error</span>\n\n${JSON.stringify(data, null, 2)}`;
+                resBox.innerHTML = response.ok ? `<span class="text-green-400 font-bold mb-2 block">File Processed Successfully</span>` + formatResult(data) : `<span class="text-red-400">Error</span>\n\n${JSON.stringify(data, null, 2)}`;
             } catch (e) {
                 resBox.innerHTML = `<span class="text-red-400">Error:</span> ${e.message}`;
             } finally {
@@ -380,7 +430,7 @@
             try {
                 const response = await fetch(`${API_BASE}/inspect/image`, { method: 'POST', body: formData });
                 const data = await response.json();
-                resBox.innerHTML = response.ok ? `<span class="text-green-400">Success</span>\n\n${JSON.stringify(data, null, 2)}` : `<span class="text-red-400">Error</span>\n\n${JSON.stringify(data, null, 2)}`;
+                resBox.innerHTML = response.ok ? `<span class="text-green-400 font-bold mb-2 block">Vision Analysis Complete</span>` + formatResult(data) : `<span class="text-red-400">Error</span>\n\n${JSON.stringify(data, null, 2)}`;
             } catch (e) {
                 resBox.innerHTML = `<span class="text-red-400">Error:</span> ${e.message}`;
             } finally {
