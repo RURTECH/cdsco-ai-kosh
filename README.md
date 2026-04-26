@@ -37,8 +37,9 @@ This platform addresses the critical bottlenecks in the CDSCO regulatory ecosyst
 |---|---|---|---|
 | 6 | **Biometric Identity Tokenization** | `POST /biometric/identify` | Facial recognition with blockchain pseudonymisation for patient identity management. |
 | 7 | **CDSCO Knowledge Base (RAG)** | `POST /ask` | Retrieval-Augmented Generation over 11 official CDSCO PDFs (NDCT Rules 2019, SAE Manual, PSUR, Export NOC, etc.). |
-| 8 | **Conversational Chat Agent** | `POST /chat` | Multi-turn regulatory assistant with voice input/output for application prep and compliance guidance. |
+| 8 | **Agentic Conversational Chat** | `POST /chat` | Multi-turn regulatory assistant with gTTS voice (Hindi/English) and agentic automated PDF generation. |
 | 9 | **PDF Report Generator** | `POST /generate-pdf` | Generates formal computerized CDSCO reviewer letters to applicants as downloadable PDFs. |
+| 10 | **Drug Safety Analysis (MolMIM)** | `POST /drug-safety` | AI-driven molecular screening using NVIDIA MolMIM (CMA-ES). Compares drug candidate QED scores against a built-in CDSCO benchmark database for comparative GO/NO-GO approval analysis. |
 
 ---
 
@@ -55,9 +56,10 @@ This platform addresses the critical bottlenecks in the CDSCO regulatory ecosyst
                                                        ▼
                                           ┌──────────────────────────┐
                                           │  NVIDIA NIM Cloud API    │
-                                          │  Llama 4 Maverick 17B   │
-                                          │  Llama 3.2 90B Vision   │
-                                          │  NV-EmbedQA-E5-v5       │
+                                          │  Llama 3.1 70B Instruct  │
+                                          │  Llama 3.2 90B Vision    │
+                                          │  NV-EmbedQA-E5-v5        │
+                                          │  NVIDIA MolMIM (CMA-ES)  │
                                           └──────────────────────────┘
 ```
 
