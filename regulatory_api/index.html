@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDSCO AI Regulatory Workspace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+:root {
+    --bg-dark: #0f172a;
+    --bg-card: #1e293b;
+    --bg-sidebar: #0b0f19;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent: #76b900; /* NVIDIA Green */
+    --accent-hover: #8ce100;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --danger: #ef4444;
+    --warning: #eab308;
+    --success: #22c55e;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.app-container {
+    display: flex;
+    width: 100%;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 280px;
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    padding: 0 24px 30px;
+    gap: 12px;
+}
+
+.logo-icon {
+    background: linear-gradient(135deg, var(--accent), #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 28px;
+}
+
+.sidebar h2 {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    font-size: 20px;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 0 12px;
+}
+
+.nav-links li {
+    padding: 14px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-links li i {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+.nav-links li:hover, .nav-links li.active {
+    background-color: rgba(118, 185, 0, 0.1);
+    color: var(--accent);
+}
+
+/* Main Content */
+.content-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.top-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nvidia-badge {
+    background-color: rgba(118, 185, 0, 0.15);
+    color: var(--accent);
+    border: 1px solid rgba(118, 185, 0, 0.3);
+}
+
+/* Cards & Forms */
+.card {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.card h3 {
+    margin-bottom: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card p {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.mb-2 { margin-bottom: 10px; }
+.mb-3 { margin-bottom: 20px; }
+.mt-2 { margin-top: 10px; }
+.mt-3 { margin-top: 20px; }
+
+textarea, .input-text, .input-select, .input-file {
+    width: 100%;
+    background-color: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 14px;
+    margin-bottom: 16px;
+    resize: vertical;
+    transition: border-color 0.2s;
+}
+
+textarea:focus, .input-text:focus, .input-select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.split-inputs {
+    display: flex;
+    gap: 20px;
+}
+.split-inputs textarea {
+    flex: 1;
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background-color: var(--accent);
+    color: #000;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(118, 185, 0, 0.3);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+}
+.btn-secondary:hover {
+    background-color: rgba(118, 185, 0, 0.1);
+}
+
+/* Results Box */
+.result-box {
+    margin-top: 20px;
+    padding: 16px;
+    background-color: #0f172a;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    font-family: monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.result-box.hidden {
+    display: none;
+}
+
+/* Tabs System */
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.fade-in {
+    animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Loading Spinner */
+.spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(0,0,0,0.2);
+    border-radius: 50%;
+    border-top-color: #000;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Hero Banner & Badges */
+.hero-banner {
+    width: 100%;
+    height: 220px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    background-image: url('assets/banner.png');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.banner-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.2));
+    display: flex;
+    align-items: flex-end;
+    padding: 24px;
+}
+
+.banner-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    width: 100%;
+}
+
+.banner-badge {
+    background: rgba(30, 41, 59, 0.65);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s, background 0.2s;
+}
+
+.banner-badge:hover {
+    transform: translateY(-2px);
+    background: rgba(30, 41, 59, 0.85);
+}
+
+.flag-badge { font-size: 16px; padding: 8px 12px; border-color: rgba(255, 153, 51, 0.4); }
+
+/* Universal Image Badge Container for Logos to Ensure Visibility */
+.image-badge-container {
+    display: inline-flex;
+    align-items: center;
+    background: #ffffff;
+    padding: 4px;
+    border-radius: 24px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.image-badge-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.4);
+}
+.image-badge-container.with-text {
+    padding: 4px 14px 4px 4px;
+    gap: 10px;
+}
+.brand-image-badge {
+    height: 38px;
+    border-radius: 20px;
+    object-fit: contain;
+}
+.image-badge-container .disclaimer {
+    font-size: 11px;
+    color: #334155;
+    font-weight: 700;
+}
+
+/* Fallback Text Badges */
+.cdsco { color: #10b981; border-color: rgba(16, 185, 129, 0.4); }
+.startup-india { color: #ef4444; border-color: rgba(239, 68, 68, 0.4); }
+
+/* Legal Disclaimer Box */
+.legal-disclaimer-box {
+    margin-top: -15px; /* Pull it slightly closer to the banner */
+    margin-bottom: 30px;
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px dashed rgba(148, 163, 184, 0.3);
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 11px;
+    color: #94a3b8;
+    line-height: 1.6;
+    width: 100%;
+}
+
+</style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <img src="http://rurtechforarayans.com/wp-content/uploads/2026/04/icon-1.png" alt="RurTech.ai Logo" style="height: 32px; width: 32px; object-fit: contain; border-radius: 4px;">
+                    <h2>RurTech.ai</h2>
+                </div>
+                <p style="font-size: 11px; color: var(--text-muted); line-height: 1.4; margin-top: 5px;">AkhandBharat Architecture of AI using Gen and RAG Transformative Transformers</p>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-target="health-tab"><i class="fa-solid fa-heart-pulse"></i> System Status</li>
+                <li data-target="anonymise-tab"><i class="fa-solid fa-user-secret"></i> Anonymise (PII/PHI)</li>
+                <li data-target="summarise-tab"><i class="fa-solid fa-file-lines"></i> Summarise</li>
+                <li data-target="assess-tab"><i class="fa-solid fa-list-check"></i> Assess Completeness</li>
+                <li data-target="compare-tab"><i class="fa-solid fa-code-compare"></i> Compare Versions</li>
+                <li data-target="classify-tab"><i class="fa-solid fa-triangle-exclamation"></i> Classify SAE</li>
+                <li data-target="inspect-tab"><i class="fa-solid fa-microscope"></i> Site Inspection</li>
+                <li data-target="biometric-tab"><i class="fa-solid fa-face-viewfinder"></i> Biometric Queue</li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            <div class="hero-banner">
+                <div class="banner-overlay">
+                    <div class="banner-badges">
+                        <span class="banner-badge flag-badge">🇮🇳</span>
+                        
+                        <div class="image-badge-container with-text">
+                            <img src="http://rurtechforarayans.com/wp-content/uploads/2026/04/Picture2.jpg" alt="RurTech Inception" class="brand-image-badge">
+                            <span class="disclaimer">Inception Partner</span>
+                        </div>
+                        
+                        <div class="image-badge-container">
+                            <img src="http://rurtechforarayans.com/wp-content/uploads/2026/04/aws-stsartup.png" alt="AWS Activate Startup" class="brand-image-badge">
+                        </div>
+                        
+                        <div class="image-badge-container">
+                            <img src="http://rurtechforarayans.com/wp-content/uploads/2026/04/162936432072800.png" alt="Incubation Center" class="brand-image-badge">
+                        </div>
+                        
+                        <div class="image-badge-container">
+                            <img src="http://rurtechforarayans.com/wp-content/uploads/2026/04/gov-login-img-scaled.png" alt="DPIIT Ministry" class="brand-image-badge">
+                        </div>
+                        
+                        <span class="banner-badge cdsco"><i class="fa-solid fa-staff-snake"></i> CDSCO</span>
+                        
+                        <div class="image-badge-container">
+                            <img src="http://rurtechforarayans.com/wp-content/uploads/2026/04/images.png" alt="Supported by MeitY Startup Hub" class="brand-image-badge">
+                        </div>
+                        
+                        <span class="banner-badge startup-india"><i class="fa-solid fa-rocket"></i> Startup India</span>
+                        
+                        <div class="image-badge-container">
+                            <img src="http://rurtechforarayans.com/wp-content/uploads/2026/04/1631003581247.jpg" alt="UP Startup" class="brand-image-badge">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="legal-disclaimer-box">
+                <strong>Disclaimer:</strong> RurTech.ai is an independent company. The display of government logos (DPIIT, CDSCO, MeitY, UP Startup, Startup India) is out of respect to signify our formal registrations and alignment with national initiatives. It does not imply that RurTech.ai is a government subsidiary or that any government body holds equity in the company. Additionally, the RurTech Inception and AWS Activate badges denote our formal acceptance into their startup programs, where they act as technology accelerators and validators for our AI models.
+            </div>
+
+            <header class="top-header">
+                <h1>Regulatory Intelligence Dashboard</h1>
+                <div class="header-badges">
+                    <span class="badge RurTech-badge"><i class="fa-solid fa-microchip"></i> Powered by RurTech NIM</span>
+                </div>
+            </header>
+
+            <div class="tab-content-container">
+                <!-- System Status Tab -->
+                <section id="health-tab" class="tab-pane active fade-in">
+                    <div class="card">
+                        <h3><i class="fa-solid fa-server"></i> Backend Connection</h3>
+                        <p>Check if the FastAPI backend is running and accessible.</p>
+                        <button class="btn btn-primary" onclick="checkHealth()">Test Connection</button>
+                        <div id="health-result" class="result-box hidden"></div>
+                    </div>
+                </section>
+
+                <!-- Anonymise Tab -->
+                <section id="anonymise-tab" class="tab-pane fade-in">
+                    <div class="card">
+                        <h3><i class="fa-solid fa-user-secret"></i> Document Anonymisation</h3>
+                        <p>Redact PII/PHI automatically complying with DPDP Act 2023.</p>
+                        <textarea id="anonymise-input" rows="5" placeholder="Enter patient data, clinical notes, etc.">Patient Ram Kumar, aged 45, phone +91 9876543210, admitted for testing.</textarea>
+                        <button class="btn btn-primary" onclick="runApi('anonymise', {text: document.getElementById('anonymise-input').value})">Anonymise Text</button>
+                        <div id="anonymise-result" class="result-box hidden"></div>
+                    </div>
+                </section>
+
+                <!-- Summarise Tab -->
+                <section id="summarise-tab" class="tab-pane fade-in">
+                    <div class="card">
+                        <h3><i class="fa-solid fa-file-lines"></i> Intelligent Document Summarisation</h3>
+                        <p>Extract and synthesize critical regulatory info from diverse, high-volume source documents.</p>
+                        
+                        <select id="summarise-type" class="input-select">
+                            <option value="sugam">SUGAM Application Data (Multiple Checklists)</option>
+                            <option value="sae">SAE Case Narration (Workflows)</option>
+                            <option value="meeting">Meeting Transcripts & Audio Summaries</option>
+                            <option value="voice_call">Voice Call (Telephonic Contextual Analysis)</option>
+                        </select>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+                            <textarea id="summarise-input" rows="5" placeholder="Paste document content, notes, or transcript here..." style="margin-bottom: 0;"></textarea>
+                            
+                            <div style="display: flex; align-items: center; gap: 15px; background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                                <span style="color: var(--text-muted); font-size: 13px; font-weight: 500;"><i class="fa-solid fa-upload"></i> OR Upload File (PDF, TXT, WAV, MP3):</span>
+                                <input type="file" id="summarise-file" class="input-file" accept=".pdf,.txt,.wav,.mp3,.m4a" style="margin-bottom: 0; border: none; padding: 0;">
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-primary" onclick="runApi('summarise', {text: document.getElementById('summarise-input').value, doc_type: document.getElementById('summarise-type').value})">Summarise Text</button>
+                            <button class="btn btn-secondary" onclick="uploadSummariseFile()">Upload & Summarise File</button>
+                        </div>
+                        
+                        <div id="summarise-result" class="result-box hidden"></div>
+                    </div>
+                </section>
+
+                <!-- Assess Completeness Tab -->
+                <section id="assess-tab" class="tab-pane fade-in">
+                    <div class="card">
+                        <h3><i class="fa-solid fa-list-check"></i> Application Completeness Assessment</h3>
+                        <p>Evaluate application text against mandatory CDSCO SUGAM fields.</p>
+                        <textarea id="assess-input" rows="5" placeholder="Paste application content...">Applicant Name: Pharma Inc. Drug Name: CureAll. Indication: Headache. Phase: 3. Protocol Title: A study on CureAll.</textarea>
+                        <button class="btn btn-primary" onclick="runApi('assess', {text: document.getElementById('assess-input').value})">Assess Document</button>
+                        <div id="assess-result" class="result-box hidden"></div>
+                    </div>
+                </section>
+
+                <!-- Compare Versions Tab -->
+                <section id="compare-tab" class="tab-pane fade-in">
+                    <div class="card">
+                        <h3><i class="fa-solid fa-code-compare"></i> Document Version Comparison</h3>
+                        <p>Detect semantic changes between V1 and V2 of clinical trial protocols.</p>
+                        <div class="split-inputs">
+                            <textarea id="compare-v1" rows="5" placeholder="Version 1 text...">The trial will enroll 100 patients. Dosage is 50mg daily.</textarea>
+                            <textarea id="compare-v2" rows="5" placeholder="Version 2 text...">The trial will enroll 150 patients. Dosage is 100mg daily. Added safety monitoring.</textarea>
+                        </div>
+                        <button class="btn btn-primary mt-3" onclick="runApi('compare', {document_v1: document.getElementById('compare-v1').value, document_v2: document.getElementById('compare-v2').value, similarity_threshold: 0.85})">Compare Versions</button>
+                        <div id="compare-result" class="result-box hidden"></div>
+                    </div>
+                </section>
+
+                <!-- Classify SAE Tab -->
+                <section id="classify-tab" class="tab-pane fade-in">
+                    <div class="card">
+                        <h3><i class="fa-solid fa-triangle-exclamation"></i> Classification & Prioritisation Tool</h3>
+                        <p>Classify cases by severity (death, disability, hospitalisation, others), detect duplicates, and help officers with prioritisation for efficient review.</p>
+                        <input type="text" id="classify-id" class="input-text mb-2" placeholder="Case ID (e.g. CASE123)" value="CASE123">
+                        <textarea id="classify-input" rows="5" placeholder="Describe the adverse event...">Patient experienced severe allergic reaction and was hospitalised for 3 days after taking the medication.</textarea>
+                        <button class="btn btn-primary" onclick="runApi('classify', {case_id: document.getElementById('classify-id').value, text: document.getElementById('classify-input').value})">Classify & Triage</button>
+                        <div id="classify-result" class="result-box hidden"></div>
+                    </div>
+                </section>
+
+                <!-- Site Inspection Tab -->
+                <section id="inspect-tab" class="tab-pane fade-in">
+                    <div class="card mb-3">
+                        <h3><i class="fa-solid fa-camera"></i> Inspection Report Generation (VLM)</h3>
+                        <p>Convert unstructured and handwritten observations gathered during site inspections into standardised, formal reports conforming to CDSCO inspection templates.</p>
+                        <input type="file" id="inspect-image-file" class="input-file" accept="image/*" capture="environment">
+                        <button class="btn btn-primary mt-2" onclick="uploadImage()">Generate Report from Handwritten Notes</button>
+                        <div id="inspect-image-result" class="result-box hidden"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3><i class="fa-solid fa-keyboard"></i> Text-based Report Generation</h3>
+                        <p>Alternatively, generate the standardised formal report from unstructured typed notes.</p>
+                        <textarea id="inspect-text-input" rows="5" placeholder="Paste raw notes...">Site visit on 12 Oct 2023 at City Hospital. Dr. Smith was present. Found missing consent forms for 3 patients. Otherwise things looked good.</textarea>
+                        <button class="btn btn-secondary" onclick="runApi('inspect/text', {raw_notes: document.getElementById('inspect-text-input').value})">Generate Text Report</button>
+                        <div id="inspect-text-result" class="result-box hidden"></div>
+                    </div>
+                </section>
+
+                <!-- Biometric Queue Tab -->
+                <section id="biometric-tab" class="tab-pane fade-in">
+                    <div class="card">
+                        <h3><i class="fa-solid fa-face-viewfinder"></i> Live Biometric Identification Engine</h3>
+                        <p>Live facial recognition powered by RurTech.ai Neural Engine. Contextual data synthesis powered by LLaMA 4 RurTech.ai Core and RurTech.ai Secure Cloud Datastore.</p>
+                        
+                        <div style="display: flex; gap: 20px; align-items: flex-start; margin-top: 20px;">
+                            <div style="flex: 1; text-align: center; background: rgba(15, 23, 42, 0.6); padding: 16px; border-radius: 12px; border: 1px solid var(--border-color);">
+                                <video id="webcam-video" width="100%" autoplay playsinline style="border-radius: 8px; border: 2px solid #334155; background: #000; min-height: 240px;"></video>
+                                <button class="btn btn-primary mt-3" onclick="captureAndIdentify()" style="width: 100%; justify-content: center;"><i class="fa-solid fa-camera"></i> Capture Desktop Webcam</button>
+                                
+                                <p style="color: var(--text-muted); font-size: 12px; margin-top: 15px; margin-bottom: 8px;">📱 <strong>Mobile Access Mode:</strong></p>
+                                <input type="file" id="mobile-biometric-file" accept="image/*" capture="user" style="display: none;" onchange="uploadMobileBiometric(this)">
+                                <button class="btn btn-secondary" onclick="document.getElementById('mobile-biometric-file').click()" style="width: 100%; justify-content: center;"><i class="fa-solid fa-mobile-screen"></i> Take Photo with Phone</button>
+                                
+                                <canvas id="webcam-canvas" style="display: none;"></canvas>
+                            </div>
+                            
+                            <div style="flex: 1;">
+                                <div id="biometric-result" class="result-box hidden" style="margin-top: 0; min-height: 240px; border: 1px solid rgba(255, 255, 255, 0.1);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+const API_BASE = window.location.origin;
+
+// Tab Navigation Logic
+document.querySelectorAll('.nav-links li').forEach(item => {
+    item.addEventListener('click', (e) => {
+        // Remove active class from all tabs
+        document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+        
+        // Add active class to clicked tab
+        const targetId = item.getAttribute('data-target');
+        item.classList.add('active');
+        document.getElementById(targetId).classList.add('active');
+    });
+});
+
+// Generic API Runner
+async function runApi(endpoint, payload) {
+    const tabId = document.querySelector('.nav-links li.active').getAttribute('data-target');
+    const resultBoxId = `${endpoint.replace('/', '-')}-result`;
+    const resultBox = document.getElementById(resultBoxId);
+    const btn = event.currentTarget;
+    const originalText = btn.innerHTML;
+
+    // UI Loading State
+    btn.innerHTML = `<span class="spinner"></span> Processing...`;
+    btn.disabled = true;
+    resultBox.classList.remove('hidden');
+    resultBox.innerHTML = '<span style="color: var(--text-muted)">Awaiting response from RurTech NIM Cloud...</span>';
+
+    try {
+        const response = await fetch(`${API_BASE}/${endpoint}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Syntax Highlight JSON
+            resultBox.innerHTML = `<span style="color: var(--success)">Success (200 OK)</span>\n\n${JSON.stringify(data, null, 2)}`;
+        } else {
+            resultBox.innerHTML = `<span style="color: var(--danger)">Error (${response.status})</span>\n\n${JSON.stringify(data, null, 2)}`;
+        }
+    } catch (error) {
+        resultBox.innerHTML = `<span style="color: var(--danger)">Connection Error:</span> ${error.message}\nMake sure the FastAPI backend is running on ${API_BASE}.`;
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+// Health Check
+async function checkHealth() {
+    const btn = event.currentTarget;
+    const originalText = btn.innerHTML;
+    const resultBox = document.getElementById('health-result');
+
+    btn.innerHTML = `<span class="spinner"></span> Checking...`;
+    btn.disabled = true;
+    resultBox.classList.remove('hidden');
+
+    try {
+        const response = await fetch(`${API_BASE}/health`);
+        const data = await response.json();
+        resultBox.innerHTML = `<span style="color: var(--success)">Backend is Online</span>\n\n${JSON.stringify(data, null, 2)}`;
+    } catch (error) {
+        resultBox.innerHTML = `<span style="color: var(--danger)">Backend Offline.</span> Make sure you run 'python main.py' in the backend directory.\nError: ${error.message}`;
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+// Image Upload Special Case
+async function uploadImage() {
+    const fileInput = document.getElementById('inspect-image-file');
+    const resultBox = document.getElementById('inspect-image-result');
+    const btn = event.currentTarget;
+    const originalText = btn.innerHTML;
+
+    if (!fileInput.files.length) {
+        alert("Please select an image file first.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    btn.innerHTML = `<span class="spinner"></span> Analysing Image...`;
+    btn.disabled = true;
+    resultBox.classList.remove('hidden');
+    resultBox.innerHTML = '<span style="color: var(--text-muted)">Sending to RurTech Vision Model...</span>';
+
+    try {
+        const response = await fetch(`${API_BASE}/inspect/image`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+            resultBox.innerHTML = `<span style="color: var(--success)">Success (200 OK)</span>\n\n${JSON.stringify(data, null, 2)}`;
+        } else {
+            resultBox.innerHTML = `<span style="color: var(--danger)">Error (${response.status})</span>\n\n${JSON.stringify(data, null, 2)}`;
+        }
+    } catch (error) {
+        resultBox.innerHTML = `<span style="color: var(--danger)">Connection Error:</span> ${error.message}`;
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+// Summarise File Upload Pipeline
+async function uploadSummariseFile() {
+    const fileInput = document.getElementById('summarise-file');
+    const typeSelect = document.getElementById('summarise-type');
+    const resultBox = document.getElementById('summarise-result');
+    const btn = event.currentTarget;
+    const originalText = btn.innerHTML;
+
+    if (!fileInput.files.length) {
+        alert("Please select a file to upload.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    formData.append('doc_type', typeSelect.value);
+
+    btn.innerHTML = `<span class="spinner"></span> Processing File...`;
+    btn.disabled = true;
+    resultBox.classList.remove('hidden');
+    resultBox.innerHTML = '<span style="color: var(--text-muted)">Extracting text and generating regulatory summary via NIM Cloud...</span>';
+
+    try {
+        const response = await fetch(`${API_BASE}/summarise/file`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+            resultBox.innerHTML = `<span style="color: var(--success)">Success (200 OK)</span>\n\n${JSON.stringify(data, null, 2)}`;
+        } else {
+            resultBox.innerHTML = `<span style="color: var(--danger)">Error (${response.status})</span>\n\n${JSON.stringify(data, null, 2)}`;
+        }
+    } catch (error) {
+        resultBox.innerHTML = `<span style="color: var(--danger)">Connection Error:</span> ${error.message}`;
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+// ---------------------------------------------------------------------------
+// Biometric Webcam Pipeline
+// ---------------------------------------------------------------------------
+let videoStream = null;
+
+document.querySelector('[data-target="biometric-tab"]').addEventListener('click', async () => {
+    const videoElement = document.getElementById('webcam-video');
+    if (!videoStream && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        try {
+            videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            videoElement.srcObject = videoStream;
+        } catch (err) {
+            console.error("Webcam error:", err);
+            const res = document.getElementById('biometric-result');
+            res.innerHTML = '<span style="color: var(--danger)">Webcam Access Denied or Unavailable. Please allow camera permissions.</span>';
+            res.classList.remove('hidden');
+        }
+    }
+});
+
+async function captureAndIdentify() {
+    const videoElement = document.getElementById('webcam-video');
+    const canvasElement = document.getElementById('webcam-canvas');
+    const resultBox = document.getElementById('biometric-result');
+    const btn = event.currentTarget;
+    const originalText = btn.innerHTML;
+    
+    // Draw frame
+    canvasElement.width = videoElement.videoWidth || 640;
+    canvasElement.height = videoElement.videoHeight || 480;
+    canvasElement.getContext('2d').drawImage(videoElement, 0, 0);
+    
+    // Base64
+    const dataUrl = canvasElement.toDataURL('image/jpeg');
+    const imageBase64 = dataUrl.split(',')[1];
+    
+    if (!imageBase64) {
+        alert("Failed to capture image.");
+        return;
+    }
+
+    btn.innerHTML = '<span class="spinner"></span> Extracting Facenet...';
+    btn.disabled = true;
+    resultBox.classList.remove('hidden');
+    resultBox.innerHTML = '<span style="color: var(--text-muted)">Running RurTech.ai Biometric Extractor extraction...<br>Tokenizing & verifying Blockchain Registry...<br>Synthesizing context via RurTech.ai Core Engine...</span>';
+
+    try {
+        const response = await fetch(`${API_BASE}/biometric/identify`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image_base64: imageBase64 })
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+            resultBox.innerHTML = `
+                <div style="padding: 16px; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px; margin-bottom: 15px;">
+                    <strong style="color: var(--success); font-size: 16px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-robot"></i> RurTech.ai Core Engine Context:</strong>
+                    <p style="margin-top: 10px; font-size: 15px; color: #f8fafc; line-height: 1.5; font-style: italic;">"${data.RurTech.ai Core_contextual_greeting}"</p>
+                </div>
+                <div style="padding: 16px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; margin-bottom: 15px;">
+                    <strong style="color: #60a5fa; font-size: 14px;"><i class="fa-brands fa-hive"></i> On-Device Blockchain Registry (Secured)</strong>
+                    <div style="margin-top: 8px; font-family: monospace; font-size: 12px; color: #cbd5e1;">
+                        Token: ${data.tokenizer_pseudonymisation}<br>
+                        TX Hash: ${data.blockchain_registry.transaction_hash}<br>
+                        Smart Contract: ${data.blockchain_registry.smart_contract}
+                    </div>
+                </div>
+                <strong style="color: var(--accent);">Backend Diagnostics:</strong>
+                <pre style="margin-top: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; font-size: 11px;">${JSON.stringify(data, null, 2)}</pre>
+            `;
+        } else {
+            resultBox.innerHTML = `<span style="color: var(--danger)">Error (${response.status})</span><br><pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+    } catch (error) {
+        resultBox.innerHTML = `<span style="color: var(--danger)">Connection Error:</span> ${error.message}`;
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+
+// ---------------------------------------------------------------------------
+// Mobile Camera Fallback Pipeline
+// ---------------------------------------------------------------------------
+async function uploadMobileBiometric(input) {
+    if (!input.files || !input.files.length) return;
+    const file = input.files[0];
+    
+    // Read file to base64
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        const base64Url = e.target.result;
+        const imageBase64 = base64Url.split(',')[1];
+        
+        // Hide webcam video, show canvas with static image
+        const videoElement = document.getElementById('webcam-video');
+        const canvasElement = document.getElementById('webcam-canvas');
+        
+        const img = new Image();
+        img.onload = async () => {
+            canvasElement.width = img.width;
+            canvasElement.height = img.height;
+            canvasElement.getContext('2d').drawImage(img, 0, 0);
+            
+            videoElement.style.display = 'none';
+            canvasElement.style.display = 'block';
+            canvasElement.style.width = '100%';
+            canvasElement.style.borderRadius = '8px';
+            canvasElement.style.border = '2px solid var(--accent)';
+            
+            // Re-use identify logic
+            await runBiometricIdentification(imageBase64, document.querySelector('button[onclick="document.getElementById(\\'mobile-biometric-file\\').click()"]'));
+        };
+        img.src = base64Url;
+    };
+    reader.readAsDataURL(file);
+}
+
+// Extracted shared logic for desktop/mobile
+async function runBiometricIdentification(imageBase64, btn) {
+    const resultBox = document.getElementById('biometric-result');
+    const originalText = btn.innerHTML;
+
+    btn.innerHTML = '<span class="spinner"></span> Extracting...';
+    btn.disabled = true;
+    resultBox.classList.remove('hidden');
+    resultBox.innerHTML = '<span style="color: var(--text-muted)">Running RurTech.ai Biometric Extractor extraction...<br>Tokenizing & verifying Blockchain Registry...<br>Synthesizing context via RurTech.ai Core Engine...</span>';
+
+    try {
+        const response = await fetch(`${API_BASE}/biometric/identify`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image_base64: imageBase64 })
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+            resultBox.innerHTML = `
+                <div style="padding: 16px; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px; margin-bottom: 15px;">
+                    <strong style="color: var(--success); font-size: 16px; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-robot"></i> RurTech.ai Core Engine Context:</strong>
+                    <p style="margin-top: 10px; font-size: 15px; color: #f8fafc; line-height: 1.5; font-style: italic;">"${data['RurTech.ai Core_contextual_greeting']}"</p>
+                </div>
+                <div style="padding: 16px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; margin-bottom: 15px;">
+                    <strong style="color: #60a5fa; font-size: 14px;"><i class="fa-brands fa-hive"></i> On-Device Blockchain Registry (Secured)</strong>
+                    <div style="margin-top: 8px; font-family: monospace; font-size: 12px; color: #cbd5e1;">
+                        Token: ${data.tokenizer_pseudonymisation}<br>
+                        TX Hash: ${data.blockchain_registry.transaction_hash}<br>
+                        Smart Contract: ${data.blockchain_registry.smart_contract}
+                    </div>
+                </div>
+                <strong style="color: var(--accent);">Backend Diagnostics:</strong>
+                <pre style="margin-top: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; font-size: 11px;">${JSON.stringify(data, null, 2)}</pre>
+            `;
+        } else {
+            resultBox.innerHTML = `<span style="color: var(--danger)">Error (${response.status})</span><br><pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+    } catch (error) {
+        resultBox.innerHTML = `<span style="color: var(--danger)">Connection Error:</span> ${error.message}`;
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+
+
+</script>
+</body>
+</html>
+

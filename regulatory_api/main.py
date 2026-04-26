@@ -227,23 +227,15 @@ async def biometric_identify_endpoint(request: BiometricRequest):
 
 
 # ---------------------------------------------------------------------------
-# Frontend Static Hosting (For 24/7 Cloud Deployment)
+# Frontend Static Hosting (1-File Foolproof Method for Docker)
 # ---------------------------------------------------------------------------
-frontend_dir = os.path.join(os.path.dirname(__file__), "..", "frontend")
-app.mount("/static", StaticFiles(directory=frontend_dir), name="static")
-
 @app.get("/")
 async def serve_index():
-    return FileResponse(os.path.join(frontend_dir, "index.html"))
-
-@app.get("/{filename}")
-async def serve_root_files(filename: str):
-    file_path = os.path.join(frontend_dir, filename)
-    if os.path.exists(file_path):
-        return FileResponse(file_path)
+    index_path = os.path.join(os.path.dirname(__file__), "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
     from fastapi import HTTPException
-    raise HTTPException(status_code=404, detail="File not found")
-
+    raise HTTPException(status_code=404, detail="Inlined index.html not found.")
 
 if __name__ == "__main__":
     import uvicorn
