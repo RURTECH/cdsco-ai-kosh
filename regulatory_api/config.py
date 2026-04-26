@@ -52,10 +52,11 @@ def backend_info() -> dict:
 SEVERITY_CLASSES = ["Death", "Disability", "Hospitalisation", "Others"]
 
 SUGAM_MANDATORY_FIELDS = [
-    "applicant_name", "applicant_address", "drug_name", "drug_class",
-    "indication", "phase", "protocol_title", "protocol_number",
-    "irb_approval", "investigator_name", "investigator_qualification",
-    "site_name", "site_address", "patient_population", "sample_size",
-    "primary_endpoint", "secondary_endpoint", "statistical_plan",
-    "safety_monitoring_plan", "informed_consent_form", "regulatory_approval_status"
+    "Applicant_Type", "Corporate_Email_Id", "Applicant_Name", "Mobile_Number",
+    "Gender", "Nationality", "ID_Proof_Details", "Undertaking_Document",
+    "Designation", "Alternate_Email_ID", "Manufacturing_Sites", "Association_Membership",
+    "Organization_Name", "Organization_Type", "CIN_Number", "Address_Line_1",
+    "Address_Line_2", "Country", "State", "District", "City_Taluka_Tehsil",
+    "Pin_Code", "Contact_Number", "Fax_Number", "Corporate_Address_Proof",
+    "Copy_of_Manufacturing_License"
 ]
