@@ -306,31 +306,30 @@ async def ask_knowledge_base(request: AskRequest):
 # ---------------------------------------------------------------------------
 @app.post("/chat")
 async def chat_endpoint(request: ChatRequest):
-    """Feature 8: Multi-turn conversational agent for regulatory queries, application prep, and guidance."""
+    """Feature 8: Agentic Conversational Agent with gTTS voice and PDF Generation."""
     from config import get_client, get_model
+    from gtts import gTTS
     client = get_client()
     
     system_prompt = """You are RurTech.ai CDSCO Regulatory Assistant — an expert AI agent for Indian pharmaceutical regulation.
 
 You help users with:
-1. Preparing SUGAM portal applications (registration, form filling, undertaking documents)
-2. Understanding NDCT Rules 2019, SAE reporting requirements, PSUR filing
-3. Answering questions about CDSCO procedures, timelines, and compliance
-4. Reviewing application data and flagging missing fields
-5. Drafting reviewer letters to applicants about deficiencies
-6. Explaining regulatory workflows step-by-step
+1. Preparing SUGAM portal applications
+2. Understanding NDCT Rules 2019, SAE reporting
+3. Drafting reviewer letters and generating PDFs
+4. Explaining regulatory workflows
+
+AGENTIC CAPABILITY:
+If the user explicitly asks you to "write a formal letter", "generate a pdf report", or "create a reviewer letter", you must:
+1. Draft the full, formal letter content in your response.
+2. At the very end of your response, append the exact tag: [ACTION: GENERATE_PDF]
 
 Rules:
-- Be authoritative yet approachable
-- Always cite relevant CDSCO rules or sections when possible
-- If the user provides application data, analyze it and flag missing mandatory fields
-- If asked to draft a letter, produce a formal regulatory communication
 - Keep responses structured with clear sections
 - If unsure, say so — never hallucinate regulatory requirements"""
 
     messages = [{"role": "system", "content": system_prompt}]
     
-    # Add conversation history
     for msg in (request.history or []):
         messages.append({"role": msg.get("role", "user"), "content": msg.get("content", "")})
     
@@ -344,9 +343,46 @@ Rules:
     )
     
     reply = response.choices[0].message.content
+    pdf_base64 = None
     
+    # Agentic Action: PDF Generation
+    if "[ACTION: GENERATE_PDF]" in reply:
+        reply = reply.replace("[ACTION: GENERATE_PDF]", "").strip()
+        # Generate the PDF
+        doc = fitz.open()
+        page = doc.new_page(width=595, height=842)
+        page.draw_rect(fitz.Rect(0, 0, 595, 70), color=(0.1, 0.2, 0.5), fill=(0.1, 0.2, 0.5))
+        page.insert_text(fitz.Point(30, 30), "CENTRAL DRUGS STANDARD CONTROL ORGANISATION", fontsize=13, fontname="helv", color=(1, 1, 1))
+        page.insert_text(fitz.Point(30, 95), f"Ref: CDSCO/CHAT/{datetime.datetime.now().strftime('%Y%m%d%H%M')}", fontsize=9, fontname="helv", color=(0.3, 0.3, 0.3))
+        
+        body_rect = fitz.Rect(30, 150, 565, 800)
+        content_text = reply.replace("**", "").replace("##", "").replace("*", "")
+        rc = page.insert_textbox(body_rect, content_text, fontsize=10, fontname="helv", color=(0.15, 0.15, 0.15), align=0)
+        
+        pdf_bytes = doc.tobytes()
+        doc.close()
+        pdf_base64 = base64.b64encode(pdf_bytes).decode("utf-8")
+        
+        reply += "\n\n*(I have successfully generated the formal PDF report as requested. You can download it using the link provided in the chat.)*"
+
+    # Agentic Action: Voice Generation via gTTS (Hindi or English)
+    audio_base64 = None
+    try:
+        lang = 'hi' if any('\u0900' <= c <= '\u097f' for c in reply) else 'en'
+        # Limit TTS text to avoid long latency
+        tts = gTTS(text=reply.replace("*", "")[:1000], lang=lang, tld='co.in' if lang == 'en' else 'com')
+        fp = io.BytesIO()
+        tts.write_to_fp(fp)
+        fp.seek(0)
+        audio_base64 = base64.b64encode(fp.read()).decode('utf-8')
+    except Exception as e:
+        print(f"gTTS error: {e}")
+        pass
+
     return {
         "reply": reply,
+        "audio_base64": audio_base64,
+        "pdf_base64": pdf_base64,
         "model_used": get_model("summarise"),
         "timestamp": datetime.datetime.now().isoformat()
     }

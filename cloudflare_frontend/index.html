@@ -579,9 +579,28 @@ You are hereby directed to rectify the above deficiencies within 30 days of rece
                 document.getElementById('chat-typing')?.remove();
                 const reply = data.reply || 'No response received.';
                 chatHistory.push({role: 'assistant', content: reply});
-                container.innerHTML += `<div class="chat-bubble-ai text-slate-200 text-sm"><i class="fa-solid fa-robot text-purple-400"></i> ${reply.replace(/\n/g,'<br>')}</div>`;
+                
+                let extraHtml = '';
+                if (data.pdf_base64) {
+                    const bytes = atob(data.pdf_base64);
+                    const arr = new Uint8Array(bytes.length);
+                    for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+                    const blob = new Blob([arr], {type: 'application/pdf'});
+                    const url = URL.createObjectURL(blob);
+                    extraHtml = `<div class="mt-3"><a href="${url}" download="Generated_Report.pdf" class="inline-block bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-lg font-medium text-xs transition-colors"><i class="fa-solid fa-download"></i> Download Generated PDF</a></div>`;
+                }
+
+                container.innerHTML += `<div class="chat-bubble-ai text-slate-200 text-sm"><i class="fa-solid fa-robot text-purple-400"></i> ${reply.replace(/\n/g,'<br>')}${extraHtml}</div>`;
                 container.scrollTop = container.scrollHeight;
-                if (document.getElementById('voice-output').checked) speakText(reply);
+                
+                if (document.getElementById('voice-output').checked) {
+                    if (data.audio_base64) {
+                        const snd = new Audio('data:audio/mp3;base64,' + data.audio_base64);
+                        snd.play();
+                    } else {
+                        speakText(reply);
+                    }
+                }
             } catch(e) {
                 document.getElementById('chat-typing')?.remove();
                 container.innerHTML += `<div class="chat-bubble-ai text-red-400 text-sm">Connection error: ${e.message}</div>`;
