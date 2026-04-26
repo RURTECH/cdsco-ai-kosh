@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/smiles-drawer@1.0.10/dist/smiles-drawer.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -89,6 +90,9 @@
             </button>
             <button onclick="switchTab('pdfgen')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition-all text-left">
                 <i class="fa-solid fa-file-pdf w-5"></i> PDF Generator
+            </button>
+            <button onclick="switchTab('drugsafety')" class="tab-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition-all text-left">
+                <i class="fa-solid fa-flask-vial w-5"></i> Drug Safety (MolMIM)
             </button>
         </nav>
     </aside>
@@ -314,6 +318,39 @@ You are hereby directed to rectify the above deficiencies within 30 days of rece
                     </div>
                     <button onclick="generatePDF(this)" class="bg-rose-600 hover:bg-rose-500 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-rose-500/20"><i class="fa-solid fa-file-export"></i> Generate & Download PDF</button>
                     <div id="pdfgen-result" class="mt-6 p-4 rounded-lg bg-slate-900 border border-slate-800 text-sm hidden text-slate-300"></div>
+                </div>
+            </section>
+
+            <!-- Drug Safety Analysis (NVIDIA MolMIM) -->
+            <section id="drugsafety" class="tab-content max-w-5xl mx-auto">
+                <div class="glass-panel p-8 rounded-2xl border border-slate-800 shadow-xl">
+                    <h3 class="text-2xl font-semibold mb-2 flex items-center gap-3"><i class="fa-solid fa-flask-vial text-lime-400"></i> Drug Safety Analysis <span class="text-xs font-normal text-slate-400 ml-2">Powered by NVIDIA MolMIM + RurTech NIM</span></h3>
+                    <p class="text-slate-400 mb-6">Enter a drug name and SMILES. NVIDIA MolMIM generates optimized molecular candidates (QED-scored), and the AI produces a CDSCO safety narrative.</p>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <input type="text" id="ds-drug" class="bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 outline-none focus:ring-2 focus:ring-lime-500" placeholder="Drug Name" value="Ergotamine">
+                        <input type="text" id="ds-indication" class="bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 outline-none focus:ring-2 focus:ring-lime-500" placeholder="Therapeutic Indication" value="Migraine">
+                    </div>
+                    <textarea id="ds-smiles" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 outline-none focus:ring-2 focus:ring-lime-500 resize-none mb-4 font-mono text-sm" placeholder="SMILES string (optional — uses default Ergotamine if blank)">[H][C@@]12Cc3c[nH]c4cccc(C1=C[C@H](NC(=O)N(CC)CC)CN2C)c34</textarea>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <input type="text" id="ds-dose" class="bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 outline-none focus:ring-2 focus:ring-lime-500" placeholder="Proposed Dose (e.g. 2mg)">
+                        <input type="text" id="ds-route" class="bg-slate-900 border border-slate-700 rounded-lg p-3 text-slate-200 outline-none focus:ring-2 focus:ring-lime-500" placeholder="Route (e.g. Oral, IV)">
+                    </div>
+                    <button onclick="runDrugSafety(this)" class="bg-lime-600 hover:bg-lime-500 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-lime-500/20 mb-6">
+                        <i class="fa-solid fa-atom"></i> Analyse with NVIDIA MolMIM
+                    </button>
+
+                    <!-- QED Similarity Grid -->
+                    <div id="molmim-grid-wrap" class="hidden mb-6">
+                        <h4 class="text-sm font-semibold text-slate-400 mb-3"><i class="fa-solid fa-grid"></i> Molecular Candidates — QED Similarity Grid <span class="text-xs text-slate-600">(hover to zoom)</span></h4>
+                        <div id="molmim-grid" class="flex flex-wrap gap-1"></div>
+                        <div class="flex items-center gap-3 mt-3">
+                            <div class="flex gap-1 items-center"><div class="w-4 h-4 rounded" style="background:rgb(215,227,40)"></div><span class="text-xs text-slate-500">High QED (&gt;0.8)</span></div>
+                            <div class="flex gap-1 items-center"><div class="w-4 h-4 rounded" style="background:rgb(111,207,88)"></div><span class="text-xs text-slate-500">Medium (0.5-0.8)</span></div>
+                            <div class="flex gap-1 items-center"><div class="w-4 h-4 rounded" style="background:rgb(33,148,140)"></div><span class="text-xs text-slate-500">Low (&lt;0.5)</span></div>
+                        </div>
+                    </div>
+
+                    <div id="drugsafety-result" class="p-4 rounded-lg bg-slate-900 border border-slate-800 font-mono text-sm hidden whitespace-pre-wrap overflow-x-auto text-slate-300"></div>
                 </div>
             </section>
         </div>
@@ -620,6 +657,83 @@ You are hereby directed to rectify the above deficiencies within 30 days of rece
             } catch(e) {
                 resBox.innerHTML = `<span class="text-red-400">Error:</span> ${e.message}`;
             } finally { btn.innerHTML = orig; btn.disabled = false; }
+        }
+
+        // ===================== DRUG SAFETY (MolMIM) =====================
+        async function runDrugSafety(btn) {
+            const resBox = document.getElementById('drugsafety-result');
+            const gridWrap = document.getElementById('molmim-grid-wrap');
+            const grid = document.getElementById('molmim-grid');
+            const orig = btn.innerHTML;
+            
+            const payload = {
+                drug_name: document.getElementById('ds-drug').value,
+                indication: document.getElementById('ds-indication').value,
+                smiles: document.getElementById('ds-smiles').value,
+                dose: document.getElementById('ds-dose').value,
+                route: document.getElementById('ds-route').value
+            };
+            
+            btn.innerHTML = `<span class="spinner"></span> Analyzing Safety...`;
+            btn.disabled = true;
+            resBox.classList.remove('hidden');
+            gridWrap.classList.add('hidden');
+            resBox.innerHTML = '<span class="text-slate-500 animate-pulse">Running MolMIM molecular generation & CDSCO safety rules...</span>';
+            
+            try {
+                const res = await fetch(`${API_BASE}/drug-safety`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                
+                if (res.ok) {
+                    // Display NLP formatted result
+                    resBox.innerHTML = `<span class="text-green-400 font-bold mb-2 block">Safety Analysis Complete</span>` + formatResult(data);
+                    
+                    // Render MolMIM Grid
+                    if (data.similarity_matrix && data.similarity_matrix.length > 0) {
+                        gridWrap.classList.remove('hidden');
+                        grid.innerHTML = '';
+                        
+                        // Wait briefly for DOM to render the canvas elements
+                        setTimeout(() => {
+                            const options = { width: 125, height: 125, padding: 5, theme: 'dark' };
+                            const drawer = new SmilesDrawer.Drawer(options);
+                            
+                            data.similarity_matrix.forEach((mol, idx) => {
+                                const canvasId = `mol-canvas-${idx}`;
+                                const cellHtml = `
+                                    <div class="transition-transform hover:relative hover:z-10 hover:scale-[2] hover:bg-slate-900 border border-slate-700 bg-slate-800 rounded overflow-hidden" title="QED: ${mol.qed_score} | Safety: ${mol.safety}">
+                                        <div class="h-[125px] w-[125px] flex items-center justify-center bg-white/5 p-1">
+                                            <canvas id="${canvasId}" width="125" height="125"></canvas>
+                                        </div>
+                                        <div class="text-center text-xs font-bold py-1" style="color: black; background: ${mol.color};">${mol.qed_score}</div>
+                                    </div>
+                                `;
+                                grid.innerHTML += cellHtml;
+                            });
+                            
+                            // Draw all molecules
+                            data.similarity_matrix.forEach((mol, idx) => {
+                                const canvasId = `mol-canvas-${idx}`;
+                                SmilesDrawer.parse(mol.smiles, function(tree) {
+                                    drawer.draw(tree, canvasId, 'light', false);
+                                }, function(err) {
+                                    console.log('Smiles parsing error:', err);
+                                });
+                            });
+                        }, 100);
+                    }
+                } else {
+                    resBox.innerHTML = `<span class="text-red-400">Error</span>\n\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch(e) {
+                resBox.innerHTML = `<span class="text-red-400">Error:</span> ${e.message}`;
+            } finally {
+                btn.innerHTML = orig;
+                btn.disabled = false;
+            }
         }
     </script>
 </body>

@@ -428,6 +428,33 @@ async def generate_pdf_endpoint(request: PDFRequest):
 
 
 # ---------------------------------------------------------------------------
+# Feature 10: Drug Safety Analysis (Chemistry-Based AI Assessment)
+# ---------------------------------------------------------------------------
+class DrugSafetyRequest(BaseModel):
+    drug_name: str
+    smiles: Optional[str] = ""
+    indication: Optional[str] = ""
+    dose: Optional[str] = ""
+    route: Optional[str] = ""
+
+@app.post("/drug-safety")
+async def drug_safety_endpoint(request: DrugSafetyRequest):
+    """Feature 10: AI-powered drug safety assessment with toxicity profiling and similarity matrix."""
+    if not request.drug_name or len(request.drug_name.strip()) < 2:
+        raise HTTPException(400, "Please provide a valid drug name.")
+    from drug_safety import assess_drug_safety
+    result = await assess_drug_safety(
+        request.drug_name,
+        request.smiles,
+        request.indication,
+        request.dose,
+        request.route
+    )
+    result["nlp_conclusion"] = await generate_nlp_conclusion(result, "Drug Safety Assessment")
+    return result
+
+
+# ---------------------------------------------------------------------------
 # Frontend Static Hosting (1-File Foolproof Method for Docker)
 # ---------------------------------------------------------------------------
 @app.get("/")
